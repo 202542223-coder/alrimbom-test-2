@@ -1,0 +1,1110 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no,maximum-scale=1,minimum-scale=1">
+<meta name="theme-color" content="#FFF4E8">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<title>알림봄</title>
+<style>
+:root{
+  --bg:#FFF8F0; --card:#FFFFFF; --ink:#3B2F2A; --sub:#7A6A62; --line:#F0E2D3;
+  --orange:#FF9B54; --orange-l:#FFE6D0;
+  --mint:#5FC3A5; --mint-l:#DDF4EC;
+  --purple:#9C86E0; --purple-l:#E9E3FA;
+  --warn:#E8564A; --fs:18px; --nav:rgba(255,248,240,.96); --chipink:#216B58; --on:#fff;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1E1814;--card:#2A221D;--ink:#F6EBE0;--sub:#B9A89C;--line:#43372F;--orange:#F2893F;--orange-l:#4A3022;--mint:#4DB394;--mint-l:#1F3A32;--purple:#8D78D6;--purple-l:#352E4F;--warn:#F06A5E;--nav:rgba(30,24,20,.96);--chipink:#A5E6D2;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1E1814;--card:#2A221D;--ink:#F6EBE0;--sub:#B9A89C;--line:#43372F;--orange:#F2893F;--orange-l:#4A3022;--mint:#4DB394;--mint-l:#1F3A32;--purple:#8D78D6;--purple-l:#352E4F;--warn:#F06A5E;--nav:rgba(30,24,20,.96);--chipink:#A5E6D2;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{word-break:keep-all;overflow-wrap:break-word;margin:0;height:100%;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;font-size:var(--fs);line-height:1.45}
+body{display:flex;justify-content:center;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#app{width:100%;max-width:560px;height:100%;display:flex;flex-direction:column;position:relative;background:var(--bg)}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input,textarea,select{font:inherit;color:inherit}
+header.top{padding:14px 2px 12px;display:flex;align-items:center;gap:10px}
+header.top h1{margin:0;font-size:1.25em;flex:1}
+header.top .back{width:48px;height:48px;flex:none;padding:0;display:flex;align-items:center;justify-content:center;border-radius:14px;background:var(--card);border:2px solid var(--line);color:var(--ink)}
+header.top .back svg{width:24px;height:24px;display:block}
+.chip{background:var(--mint-l);color:var(--chipink);border-radius:999px;padding:6px 12px;font-size:.78em;font-weight:700;white-space:nowrap}
+main{flex:1;overflow-y:auto;padding:4px 2px 110px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:16px;margin-bottom:14px}
+.big-alert{background:var(--orange-l);border:2px solid var(--orange);border-radius:24px;padding:16px;margin-bottom:16px}
+.big-alert h2{margin:0 0 6px;font-size:1.05em}
+.big-alert .sum{font-size:1.05em;font-weight:700}
+.row{display:flex;gap:10px;align-items:center}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tile{border-radius:26px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:800;position:relative;min-height:128px;justify-content:center;border:2px solid transparent}
+.tile .ic{font-size:2.6em;line-height:1}
+.tile .badge{position:absolute;top:10px;right:12px;background:var(--warn);color:#fff;border-radius:999px;min-width:26px;height:26px;font-size:.75em;display:flex;align-items:center;justify-content:center;padding:0 7px}
+.t-o{background:var(--orange-l)}.t-m{background:var(--mint-l)}.t-p{background:var(--purple-l)}
+.btn{border-radius:18px;padding:14px 18px;font-weight:800;background:var(--orange);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px}
+.btn.m{background:var(--mint)}.btn.p{background:var(--purple)}
+.btn.ghost{background:var(--card);color:var(--ink);border:2px solid var(--line)}
+.btn.block{width:100%}
+.btn.sm{min-height:44px;padding:8px 14px;font-size:.85em}
+.speak{width:58px;height:58px;border-radius:50%;background:var(--purple);color:#fff;font-size:26px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;flex:none}
+.speak>*{display:block}
+.speak.on{background:var(--warn)}
+.item h3{margin:0 0 4px;font-size:1.05em}
+.item .meta{color:var(--sub);font-size:.78em}
+.item .sum{background:var(--mint-l);border-radius:14px;padding:8px 12px;margin:8px 0;font-weight:700}
+.item .body{white-space:pre-wrap;color:var(--ink)}
+.item img.pic{width:100%;border-radius:16px;margin-top:8px}
+.aac{font-size:2.2em;width:58px;height:58px;line-height:1;border-radius:18px;background:var(--orange-l);display:flex;align-items:center;justify-content:center;flex:none}
+label.f{display:block;font-weight:800;margin:12px 0 6px;font-size:.9em}
+.in{width:100%;border:2px solid var(--line);border-radius:16px;padding:13px 14px;background:var(--card)}
+textarea.in{min-height:110px;resize:vertical}
+.pick{display:flex;flex-wrap:wrap;gap:8px}
+.pick button{font-size:1.6em;width:52px;height:52px;border-radius:14px;border:2px solid var(--line);background:var(--card)}
+.pick button.sel{border-color:var(--orange);background:var(--orange-l)}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;border:2px solid var(--line);border-radius:16px;padding:12px 6px;background:var(--card);font-weight:800}
+.seg button.sel{border-color:var(--mint);background:var(--mint-l)}
+.nav{position:absolute;left:0;right:0;bottom:0;padding:10px 14px calc(env(safe-area-inset-bottom,0px) + 10px);background:var(--nav);border-top:2px solid var(--line);display:flex;gap:10px}
+.nav button{font-size:13px!important;white-space:nowrap;flex:1;border-radius:18px;background:var(--card);border:2px solid var(--line);padding:8px 4px;display:flex;flex-direction:column;align-items:center;font-size:.72em;font-weight:800;gap:2px;min-height:58px}
+.nav button .e{font-size:1.7em;line-height:1}
+.check{display:flex;align-items:center;gap:10px;font-weight:800;padding:12px 14px;border-radius:16px;border:2px solid var(--line);margin-top:10px;width:100%;background:var(--card)}
+.check .box{width:30px;height:30px;border-radius:9px;border:3px solid var(--orange);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1em;flex:none}
+.check.done{background:var(--mint-l);border-color:var(--mint)}
+.check.done .box{background:var(--mint);border-color:var(--mint)}
+.tt{width:100%;border-collapse:separate;border-spacing:4px;font-size:.78em;text-align:center;table-layout:fixed}
+.tt th{background:var(--purple-l);border-radius:10px;padding:6px 2px}
+.tt td{background:var(--card);border:2px solid var(--line);border-radius:10px;padding:8px 2px;min-height:42px;word-break:keep-all}
+.tt td.today,.tt th.today{background:var(--orange-l);border-color:var(--orange)}
+.empty{text-align:center;color:var(--sub);padding:34px 10px}
+.empty .e{font-size:3em}
+.popup{position:fixed;inset:0;background:rgba(40,25,15,.55);display:flex;align-items:flex-end;justify-content:center;z-index:50;padding:14px}
+.popup .box{background:var(--card);border-radius:28px;max-width:540px;width:100%;padding:20px;border:3px solid var(--orange);animation:up .25s ease-out;display:flex;flex-direction:column;max-height:100%;overflow-y:auto}
+.popup .box>*{flex:none}
+.popup .box>ul{flex:0 1 auto;overflow-y:auto;min-height:60px;-webkit-overflow-scrolling:touch}
+.popup .btn{min-height:58px}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.popup h2{margin:0 0 4px;font-size:1.1em}
+.popup ul{padding-left:0;list-style:none;margin:10px 0}
+.popup li{background:var(--orange-l);border-radius:14px;padding:10px 12px;margin-bottom:8px;display:flex;gap:10px;align-items:center;font-weight:700}
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:#3B2F2A;color:#fff;padding:12px 18px;border-radius:999px;font-size:.85em;z-index:60;max-width:90%}
+.hello{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.hello .logo{width:54px;height:54px;border-radius:18px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:1.9em}
+.small{font-size:.78em;color:var(--sub)}
+.sec-h{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.05em;margin:0 0 10px}
+.sec-h .si{font-size:1.7em;line-height:1}
+.pseg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pseg button{position:relative;min-height:104px;border-radius:22px;border:3px solid var(--line);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 2px;font-weight:800}
+.pseg button .g{font-size:2.3em;line-height:1.1;font-weight:900}
+.pseg button .l{font-size:.78em}
+.pseg button.sel{border-color:var(--mint);background:var(--mint-l)}
+.pseg button.sel::after{content:'✓';position:absolute;top:6px;right:8px;width:26px;height:26px;border-radius:50%;background:var(--mint);color:#fff;font-size:.8em;display:flex;align-items:center;justify-content:center}
+.rem{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.rem button{flex:1;display:flex;align-items:center;gap:12px;border-radius:22px;border:3px solid var(--line);background:#fff;padding:10px 14px;font-weight:800;text-align:left;min-height:72px}
+.rem button .g{font-size:1.9em;line-height:1;width:1.3em;text-align:center;flex:none}
+.rem .nmw{display:flex;flex-direction:column;gap:2px;min-width:0;line-height:1.25}
+.rem .nmw b{font-weight:900}
+.rem .nmw small{font-size:.75em;font-weight:700;color:var(--sub)}
+.rem button.on{border-color:var(--mint);background:var(--mint-l)}
+.rem button .st{margin-left:auto;font-size:.8em;white-space:nowrap}
+.rem button span:nth-child(2){flex:1}
+.rem .rr{display:flex;flex-direction:column;gap:6px}
+.rem .ren{border:3px solid var(--line);border-radius:22px;background:#fff;font-weight:800;padding:12px 14px;min-height:56px;width:100%;font-size:.9em}
+.rem .rr input{width:100%;min-height:56px}
+.card{min-width:0}
+.tm{position:relative;display:flex;align-items:center;justify-content:center;width:100%;min-height:56px;border:3px solid var(--line);border-radius:22px;background:#fff;font-weight:800;text-align:center}
+.tm .tv{pointer-events:none;text-align:center}
+.rem .tm input{position:absolute;left:0;top:0;width:100%;height:100%;min-height:0;opacity:0;border:0;padding:0;margin:0;cursor:pointer}
+.rem,.rem .rr,.rem button,.rem .ren,.rem input{box-sizing:border-box;max-width:100%;min-width:0}
+.rem input[type=time]{-webkit-appearance:none;appearance:none;display:block;text-align:center;margin:0}
+.rem input[type=time]::-webkit-date-and-time-value{text-align:center;margin:0 auto}
+.rem input[type=time]::-webkit-datetime-edit{padding:0}
+.rem input{width:100%;font-size:1em;border:3px solid var(--line);border-radius:22px;padding:6px 10px;background:#fff;font-weight:800}
+.bigact{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bigact button{border-radius:22px;border:3px solid var(--line);background:#fff;min-height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-weight:800}
+.bigact button .g{font-size:2.3em;line-height:1.1}
+.wc{border:2px solid var(--line);border-radius:18px;padding:12px;margin-bottom:10px;background:#fff}
+a.btn{text-decoration:none;text-align:center}
+.wc a.btn{white-space:nowrap}
+.nw{display:block;text-decoration:none;color:inherit;background:#fff;border:2px solid var(--line);border-radius:16px;padding:10px 12px;margin-bottom:8px}
+.nw b{display:block;font-size:.95em}
+.nw span{font-size:.75em;color:var(--sub)}
+.chipbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.chipbar button{border:3px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font-weight:800}
+.chipbar button.sel{border-color:var(--purple);background:var(--purple-l)}
+.modebar{display:flex;gap:8px;padding:0 18px 10px}
+.modebar button{flex:1;border-radius:16px;padding:12px 6px;font-weight:900;border:2px solid var(--line);background:#fff;min-height:48px}
+.modebar button.on.par{background:var(--orange);border-color:var(--orange);color:#fff}
+.modebar button.on.tea{background:var(--purple);border-color:var(--purple);color:#fff}
+hr.s{border:0;border-top:2px dashed var(--line);margin:16px 0}
+.ni{background:#fff;border:2px solid var(--line);border-radius:16px;padding:10px 12px;margin-bottom:8px}
+.ni .nia{display:block;text-decoration:none;color:inherit;flex:1;min-width:0}
+.ni .nia b{display:block;font-size:.95em;margin:4px 0;line-height:1.35}
+.ni .nm{font-size:.75em;color:var(--sub)}
+.ni .dl{margin-top:6px;font-size:.8em;font-weight:900;color:var(--orange)}
+.tg{display:inline-block;font-size:.7em;font-weight:900;border-radius:999px;padding:2px 9px;margin:0 4px 2px 0;background:var(--line)}
+.tg.c{background:var(--purple-l)}.tg.o{background:var(--mint-l)}.tg.x{background:#eee;color:#777}.tg.n{background:var(--orange);color:#fff}.tg.p{background:#ffd9d4;color:#c0392b}
+textarea.in{width:100%;box-sizing:border-box}
+
+/* ---------- 좌우 흔들림 / 큰 글자 넘침 방지 (삼성 APK 대응) ---------- */
+html,body{max-width:100%;overflow-x:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:pan-y}
+body{width:100%;position:relative}
+#app{min-width:0;overflow:hidden;touch-action:pan-y}
+main{min-width:0;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y}
+main>*,.card,.item,.row,.rem,.wc{min-width:0;max-width:100%}
+.card,.item,.btn,.tile,.chip{overflow-wrap:anywhere}
+.btn{max-width:100%}
+.pseg{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pseg button{min-width:0;overflow:hidden;padding:8px 2px}
+.pseg button .g{font-size:min(2.3em,40px)}
+.pseg button .l{max-width:100%;text-align:center;line-height:1.2;white-space:normal}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bigact{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bigact button{min-width:0;padding:8px 4px;text-align:center}
+.tile{min-width:0;text-align:center}
+.seg button,.modebar button,.chipbar button{min-width:0}
+.nav{gap:6px;padding-left:8px;padding-right:8px;overflow:hidden}
+.nav button{min-width:0;white-space:normal;text-align:center;line-height:1.2;font-size:12px!important;padding:8px 2px;overflow:hidden}
+.nav button .e{font-size:22px}
+.tt{max-width:100%}
+img,video,canvas,svg{max-width:100%}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ================= 알림봄 (프로토타입) =================
+   - 모든 데이터는 이 기기(localStorage)에만 저장됩니다. 서버 연동/푸시는 미구현.
+   - TTS: 웹=speechSynthesis, APK=Capacitor TextToSpeech 플러그인
+*/
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const KEY = 'alrimbom.v1';
+const DAYS = ['월','화','수','목','금'];
+const ICONS = ['📢','🎒','📚','✏️','🧴','🍱','🧃','👕','☂️','🚌','🎨','⚽','📝','💊','📷','🗓️','💰','🏥','🎵','🌳'];
+
+const todayStr = (d=new Date()) => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const addDays = n => { const d=new Date(); d.setDate(d.getDate()+n); return todayStr(d); };
+
+function seed(){
+  return {
+    role:null, child:null, className:'햇살반',
+    settings:{ disp:{parent:{fs:0,rate:1,vol:1},teacher:{fs:0,rate:1,vol:1}},
+      remind:{work:true,eve:true,bed:false}, workTime:'18:00', eveTime:'20:00', bedTime:'21:30',
+      tRemind:{leave:true,home:true,wake:false,pre:true}, tLeave:'17:30', tHome:'19:00', tWake:'07:00', tPre:'08:00' },
+    items:{
+      notice:[
+        {id:1,icon:'📢',title:'다음 주 현장체험학습 안내',body:'10월 22일(수) 안양예술공원으로 현장체험학습을 갑니다.\n오전 9시까지 등교해 주세요.\n도시락과 물을 챙겨 주세요. 동의서는 20일(월)까지 제출해 주세요.',summary:'22일(수) 현장체험학습. 도시락·물 준비, 동의서는 20일까지 제출.',date:todayStr(),done:false},
+        {id:2,icon:'💊',title:'환절기 건강 안내',body:'일교차가 큽니다. 얇은 겉옷을 챙겨 주세요. 감기 증상이 있으면 등원 전에 알려 주세요.',summary:'일교차가 커요. 겉옷을 챙겨 주세요.',date:addDays(-1),done:false}
+      ],
+      supply:[
+        {id:3,icon:'🎒',title:'내일 준비물',body:'색연필 12색\n물티슈 1팩\n실내화 (금요일 세탁 후 가져오기)\n체육복',summary:'색연필, 물티슈, 실내화, 체육복',date:addDays(1),done:false}
+      ],
+      letter:[
+        {id:4,icon:'📝',title:'10월 가정통신문',body:'10월 학교 행사 일정과 방과후 학교 신청 안내입니다.\n방과후 신청은 25일까지 제출해 주세요.',summary:'방과후 신청서 25일까지 제출.',date:addDays(-3),done:false}
+      ],
+      photo:[],
+      welfare:[{id:6,center:'안양시관악장애인종합복지관',title:'[예시] 가을 가족 프로그램 안내',body:'예시로 넣어 둔 글이에요. 돌봄교사 모드의 “소식 올리기”에서 실제 소식으로 바꿔 올려 주세요.',date:todayStr()}],
+      meal:[{id:5,date:todayStr(),menu:'잡곡밥, 미역국, 닭갈비, 배추김치, 사과',img:null}]
+    },
+    timetable:{
+      periods:['1교시','2교시','3교시','4교시','5교시'],
+      cells:[['국어','수학','국어','통합','체육'],['수학','국어','통합','수학','음악'],['통합','체육','수학','국어','통합'],['통합','통합','미술','창체','국어'],['','','','','']]
+    },
+    nextId:100
+  };
+}
+let S;
+function load(){ try{ const r=localStorage.getItem(KEY); S = r? JSON.parse(r) : seed(); }catch(e){ S=seed(); } S.items=S.items||{}; S.items.meal=S.items.meal||[]; S.items.welfare=S.items.welfare||[]; if(!S.centers) S.centers=[]; }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ toast('저장 공간이 부족해요. 사진을 줄여 주세요.'); } }
+load();
+const RATES=[.5,1,2];
+const SAMPLE='오늘 준비물은 색연필, 물티슈, 실내화, 체육복입니다.';
+function norm(){
+  const def=seed().settings; const st=S.settings=S.settings||{};
+  Object.keys(def).forEach(k=>{ if(st[k]===undefined) st[k]=JSON.parse(JSON.stringify(def[k])); });
+  if(!st.tRemind) st.tRemind=def.tRemind;
+  if(!st.disp){ st.disp={parent:{fs:st.fs??0,rate:st.rate??1,vol:st.vol??1},teacher:{fs:0,rate:1,vol:1}}; }
+  ['parent','teacher'].forEach(r=>{ const d=st.disp[r]=st.disp[r]||{fs:0,rate:1,vol:1};
+    d.rate=RATES.reduce((a,b)=>Math.abs(b-d.rate)<Math.abs(a-d.rate)?b:a);
+    if(![0,1,2].includes(d.fs)) d.fs=0; if(d.vol==null) d.vol=1; });
+}
+norm();
+const D=()=>S.settings.disp[S.role==='teacher'?'teacher':'parent'];
+const QMODE=new URLSearchParams(location.search).get('mode');
+const EMBED=(QMODE==='parent'||QMODE==='teacher');   // 분할 화면 안에서는 모드 고정
+function getMode(){ if(EMBED) return QMODE; try{ return sessionStorage.getItem('alrimbom.mode')||'parent'; }catch(e){ return 'parent'; } }
+S.role=getMode();
+// 같은 브라우저의 다른 창(탭)에서 바뀐 내용도 바로 반영 (시연용)
+const newIds=()=>['notice','supply','letter'].flatMap(t=>S.items[t].map(i=>i.id));
+window.addEventListener('storage',e=>{ if(e.key===KEY){
+  const r=S.role, before=new Set(newIds()); if(route.p==='form') readDraft(); if(route.p==='mealform') readMealDraft(); if(route.p==='photoform') readPhotoDraft(); if(route.p==='wform') readWDraft();
+  load(); norm(); S.role=r;
+  const fresh=newIds().filter(id=>!before.has(id));
+  render();
+  if(r==='parent' && fresh.length){ toast('🔔 새 알림이 도착했어요'); setTimeout(maybePopup,300); }
+} });
+function setMode(m){
+  S.role=m; try{ sessionStorage.setItem('alrimbom.mode',m); }catch(e){}
+  $('#pop')?.remove(); stopSpeak(); speakingId=null;
+  if(route.p==='form' && m==='parent') route={p:'home'};
+  save(); render(); scheduleNative();
+}
+
+/* ---------- 유틸 ---------- */
+function ask(msg,o={}){return new Promise(res=>{
+  const d=document.createElement('div');d.className='popup';d.style.zIndex=80;
+  d.innerHTML=`<div class="box" style="border-color:var(--purple)"><h2>${esc(msg)}</h2>${o.input?`<input class="in" id="askin" value="${esc(o.value||'')}" style="margin:10px 0">`:''}<div class="row" style="margin-top:12px"><button class="btn ghost" style="flex:1" data-x="0">취소</button><button class="btn p" style="flex:1" data-x="1">확인</button></div></div>`;
+  document.body.appendChild(d);
+  const inp=d.querySelector('#askin'); if(inp) inp.focus();
+  d.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{const ok=b.dataset.x==='1';const v=inp?inp.value:ok;d.remove();res(ok?v:(o.input?null:false));});
+});}
+function applyFs(){ document.documentElement.style.setProperty('--fs', [18,22,27][D().fs]+'px'); }
+function toast(m){ const t=document.createElement('div'); t.className='toast'; t.textContent=m; document.body.appendChild(t); setTimeout(()=>t.remove(),2200); }
+function autoSummary(text){
+  const lines = String(text).split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  if(!lines.length) return '';
+  const joined = lines.join(' ');
+  if(joined.length<=60) return joined;
+  const first = joined.split(/(?<=[.!?。])\s+/)[0];
+  return (first.length>70 ? first.slice(0,68)+'…' : first);
+}
+const TYPES = {
+  notice:{name:'공지사항',emoji:'📢',cls:'t-o'},
+  supply:{name:'준비물',emoji:'🎒',cls:'t-m'},
+  timetable:{name:'시간표',emoji:'🗓️',cls:'t-p'},
+  letter:{name:'가정통신문',emoji:'📝',cls:'t-o'},
+  photo:{name:'사진첩',emoji:'📷',cls:'t-m'},
+  meal:{name:'식단표(중식)',emoji:'🍱',cls:'t-o'},
+  welfare:{name:'복지관 소식',emoji:'🏥',cls:'t-p'},
+  settings:{name:'설정',emoji:'⚙️',cls:'t-p'}
+};
+const pending = () => ['notice','supply','letter'].flatMap(t=>S.items[t].filter(i=>!i.done).map(i=>({...i,type:t})));
+
+/* ---------- TTS ---------- */
+let speakingId=null, speakTok=0;
+// APK(안드로이드 앱)에서는 WebView에 웹 음성 기능이 없어서 기기 내장 TTS 플러그인을 사용
+const nativeTTS=()=>{ try{ const C=window.Capacitor; return (C&&C.isNativePlatform&&C.isNativePlatform()&&C.Plugins&&C.Plugins.TextToSpeech)||null; }catch(e){ return null; } };
+const fmtT=v=>{ const m=/^(\d{1,2}):(\d{2})/.exec(v||''); if(!m) return v||'--:--'; let h=+m[1]; const ap=h>=12?'오후':'오전'; h=h%12||12; return ap+' '+h+':'+m[2]; };
+// 카카오톡·네이버 등 앱 안의 간이 브라우저(안드로이드)는 음성 읽기를 막아 두어서, 크롬 등 기본 브라우저로 열도록 안내
+const IN_APP=()=>{ const u=navigator.userAgent||''; return /Android/i.test(u)&&!nativeTTS()&&(/KAKAOTALK|NAVER\(inapp|FBAN|FBAV|Instagram|DaumApps|Line\//i.test(u)||/; wv\)/.test(u)); };
+function openExternal(){
+  const u=location.href.split('#')[0];
+  if(/KAKAOTALK/i.test(navigator.userAgent)){ location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(u); return; }
+  try{ const x=new URL(u); location.href='intent://'+x.host+x.pathname+x.search+'#Intent;scheme='+x.protocol.replace(':','')+';package=com.android.chrome;end'; }catch(e){ toast('오른쪽 위 ⋮ 메뉴에서 “다른 브라우저로 열기”를 눌러 주세요'); }
+}
+const inAppBanner=()=>IN_APP()?`<div class="card" style="padding:12px;border-color:var(--orange)"><div style="font-weight:900">🔊 소리 읽기가 필요하면</div><p class="small" style="margin:4px 0 8px">지금 보는 화면(카카오톡 등 앱 안의 브라우저)에서는 소리 읽기가 안 돼요.</p><button class="btn block" data-a="openext">크롬 등 기본 브라우저로 열기</button></div>`:'';
+async function inAppAsk(){ if(await ask('이 화면(앱 안의 브라우저)에서는 소리 읽기가 안 돼요. 크롬 등 기본 브라우저로 열까요?')) openExternal(); }
+function stopSpeak(){ speakTok++; const n=nativeTTS(); if(n){ try{ n.stop().catch(()=>{}); }catch(e){} } try{ window.speechSynthesis&&speechSynthesis.cancel(); }catch(e){} }
+function koVoices(){ try{ return speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().replace('_','-').startsWith('ko')); }catch(e){ return []; } }
+// 구글 온라인 음성은 속도 조절을 무시하므로, 기기 내장(localService) 음성을 우선 사용
+function pickVoice(){ const vs=koVoices(); return vs.find(v=>v.localService)||vs.find(v=>!/google/i.test(v.name))||vs[0]; }
+if('speechSynthesis' in window){ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=()=>{ if(route.p==='settings') render(); }; }
+function voiceNote(){ if(nativeTTS()) return '<p class="small" style="margin:10px 0 0">사용 중인 음성: 이 기기의 기본 한국어 음성<br>(탭 설정 → 일반 → 텍스트 음성 변환 출력에서 바꿀 수 있어요)</p>'; const v=pickVoice(); if(!v) return '<p class="small" style="margin:10px 0 0">이 기기의 한국어 음성을 찾지 못했어요.</p>';
+  const g=/google/i.test(v.name)&&!v.localService;
+  return `<p class="small" style="margin:10px 0 0">사용 중인 음성: ${esc(v.name)}${g?'<br>⚠️ 이 음성은 속도가 바뀌지 않을 수 있어요. 폰이나 다른 브라우저(Edge 등)에서 확인해 보세요.':''}</p>`; }
+function speak(text,id){
+  const nat=nativeTTS();
+  if(!nat && IN_APP()){ inAppAsk(); return; }
+  if(!nat && !('speechSynthesis' in window)){ toast('이 기기에서는 음성 읽기를 지원하지 않아요.'); return; }
+  if(speakingId===id && id!=='test'){ stopSpeak(); speakingId=null; render(); return; }
+  stopSpeak();
+  const tok=speakTok, done=()=>{ if(tok!==speakTok) return; speakingId=null; render(); };
+  speakingId=id;
+  if(nat){
+    nat.speak({text,lang:'ko-KR',rate:D().rate,pitch:1,volume:D().vol,category:'ambient'}).then(done,e=>{ if(tok===speakTok){ toast('음성을 재생하지 못했어요. 기기의 한국어 음성 설치를 확인해 주세요.'); } done(); });
+    render(); return;
+  }
+  const synth=window.speechSynthesis;
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='ko-KR'; u.rate=D().rate; u.volume=D().vol;
+  const v=pickVoice(); if(v) u.voice=v;
+  u.onend=u.onerror=done;
+  synth.speak(u); render();
+}
+const readText = i => `${i.title}. 요약. ${i.summary||autoSummary(i.body)}. ${i.body.replace(/\n/g,'. ')}`;
+
+/* ---------- 라우팅 ---------- */
+let route={p:'home'};
+function go(p,extra={}){ route={p,...extra}; stopSpeak(); speakingId=null; render(); const m=$('main'); if(m) m.scrollTop=0; }
+function render(){
+  applyFs(); if(!S.role) S.role=getMode(); if(!S.items.meal) S.items.meal=[]; if(!S.items.welfare) S.items.welfare=[]; if(!S.centers) S.centers=[];
+  const app=$('#app'); const _pm=app.querySelector('main'); const _st=_pm?_pm.scrollTop:0;
+  if(!S.role){ app.innerHTML=viewLogin(); bindLogin(); return; }
+  let body='', title='알림봄', back=false;
+  if(route.p==='home'){ body=viewHome(); }
+  else if(route.p==='list'){ title=TYPES[route.t].name; back=true; body=viewList(route.t); }
+  else if(route.p==='form'){ title=TYPES[route.t].name+(draft.editId?' 수정':' 등록'); back=true; body=viewForm(route.t); }
+  else if(route.p==='mealform'){ title=mealDraft.editId?'식단 수정':'식단 올리기'; back=true; body=viewMealForm(); }
+  else if(route.p==='photoform'){ title='사진 수정'; back=true; body=viewPhotoForm(); }
+  else if(route.p==='pform'){ title='목록 붙여넣기'; back=true; body=viewPForm(); }
+  else if(route.p==='wform'){ title=wDraft.id?'소식 수정':'소식 올리기'; back=true; body=viewWForm(); }
+  else if(route.p==='timetable'){ title='시간표'; back=true; body=viewTimetable(); }
+  else if(route.p==='settings'){ title='설정'; back=true; body=viewSettings(); }
+  app.innerHTML = `
+    <header class="top">
+      ${back?'<button class="back" data-a="back" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 5l-7 7 7 7"/></svg></button>':''}
+      <h1>${esc(title)}</h1>
+    </header>
+    ${modebar()}<main>${body}</main>
+    ${nav()}`;
+  const _nm=app.querySelector('main'); if(_nm) _nm.scrollTop=_st;
+  bindCommon();
+}
+function modebar(){
+  if(EMBED) return '';
+  return `<div class="modebar"><button class="par ${S.role==='parent'?'on':''}" data-mode="parent">👨‍👩‍👧 학부모 모드</button><button class="tea ${S.role==='teacher'?'on':''}" data-mode="teacher">🧑‍🏫 돌봄교사 모드</button></div>`;
+}
+function nav(){
+  return `<div class="nav">
+    <button data-a="home"><span class="e">🏠</span>처음</button>
+    <button data-a="readall"><span class="e">🔊</span>오늘 읽어주기</button>
+    <button data-a="settingsgo"><span class="e">🔠</span>글자·소리</button>
+    <button data-a="aac"><span class="e">🖼️</span>그림 안내</button>
+  </div>`;
+}
+
+/* ---------- 로그인 ---------- */
+function viewLogin(){
+  const mode = window.__loginMode || 'choose';
+  if(mode==='choose') return `<main style="padding-top:40px">
+    <div class="hello"><div class="logo">🌼</div><div><div style="font-size:1.6em;font-weight:900">알림봄</div><div class="small">알림 + 돌봄 · 쉬운 학교 알림장</div></div></div>
+    <p style="font-weight:700">누구세요?</p>
+    <button class="tile t-o block" style="width:100%;flex-direction:row;gap:16px" data-l="parent"><span class="ic">👨‍👩‍👧</span><span style="font-size:1.3em">학부모 · 보호자</span></button>
+    <div style="height:14px"></div>
+    <button class="tile t-p block" style="width:100%;flex-direction:row;gap:16px" data-l="teacher"><span class="ic">🧑‍🏫</span><span style="font-size:1.3em">돌봄교사</span></button>
+    <p class="small" style="margin-top:22px">※ 시연용 버전입니다. 로그인과 개인정보 입력 없이 바로 사용할 수 있고, 알림장은 이 기기에만 저장됩니다.</p>
+  </main>`;
+  if(mode==='parent') return `<header class="top"><button class="back" data-l="choose">←</button><h1>보호자 로그인</h1></header><main>
+    <div class="card">
+      <label class="f" style="margin-top:0">자녀 이름</label><input id="cn" class="in" placeholder="예) 김하늘" autocomplete="off">
+      <label class="f">자녀 생년월일 (6자리)</label><input id="cb" class="in" inputmode="numeric" maxlength="6" placeholder="예) 190315">
+      <p class="small">이름과 생년월일로 간편하게 시작해요. 복잡한 비밀번호는 필요 없어요.</p>
+      <button class="btn block" id="pgo">시작하기</button>
+    </div>
+    <button class="btn ghost block" disabled style="opacity:.55">G 구글 계정으로 시작 (서버 연동 후 제공 예정)</button>
+  </main>`;
+  return `<header class="top"><button class="back" data-l="choose">←</button><h1>돌봄교사 입장</h1></header><main>
+    <div class="card">
+      <label class="f" style="margin-top:0">학급 이름</label><input id="tc" class="in" value="${esc(S.className)}">
+      <button class="btn p block" style="margin-top:16px" id="tgo">알림장 쓰러 가기</button>
+    </div>
+    <p class="small">시연용 버전에서는 교사 인증을 생략했습니다. 실제 운영 시에는 교사 인증과 권한 구분이 필요합니다.</p>
+  </main>`;
+}
+function bindLogin(){
+  document.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{
+    S.role=b.dataset.l; S.child=null; save(); route={p:'home'}; render();
+    if(S.role==='parent'){ setTimeout(maybePopup,600); scheduleNative(); }
+  });
+  const pg=$('#pgo'); if(pg) pg.onclick=()=>{
+    const n=$('#cn').value.trim(), b=$('#cb').value.trim();
+    if(!n){ toast('자녀 이름을 입력해 주세요'); return; }
+    if(!/^\d{6}$/.test(b)){ toast('생년월일 6자리를 숫자로 입력해 주세요'); return; }
+    S.role='parent'; S.child={name:n,birth:b}; save(); window.__loginMode=null; route={p:'home'}; render(); setTimeout(maybePopup,600);
+  };
+  const tg=$('#tgo'); if(tg) tg.onclick=()=>{ S.role='teacher'; S.className=$('#tc').value.trim()||'햇살반'; save(); window.__loginMode=null; route={p:'home'}; render(); };
+}
+
+/* ---------- 홈 ---------- */
+function viewHome(){
+  const p=pending();
+  let alert='';
+  if(S.role==='parent' && p.length){
+    const top=p[0];
+    alert=`<div class="big-alert">
+      <h2>⚠️ 아직 확인 안 한 알림 ${p.length}개</h2>
+      <div class="row" style="align-items:flex-start"><div class="aac">${esc(top.icon)}</div>
+        <div style="flex:1"><div style="font-weight:800">${esc(top.title)}</div><div class="sum">${esc(top.summary||autoSummary(top.body))}</div></div>
+        <button class="speak ${speakingId==='home'?'on':''}" data-speak="home" aria-label="읽어주기">${speakingId==='home'?'⏹':'🔊'}</button></div>
+      <button class="btn block" style="margin-top:12px" data-a="popup">한눈에 보기</button>
+    </div>`;
+  } else if(S.role==='parent'){
+    alert=`<div class="big-alert" style="background:var(--mint-l);border-color:var(--mint)"><h2>✅ 오늘 알림을 모두 확인했어요</h2></div>`;
+  } else {
+    const un=p.length;
+    alert=`<div class="big-alert" style="background:var(--purple-l);border-color:var(--purple)"><h2>${un?`⏳ 학부모가 아직 확인 안 한 알림 ${un}개`:'✅ 학부모가 모든 알림을 확인했어요'}</h2><div class="small">메뉴를 눌러 알림장을 등록하세요. 요약과 그림을 함께 넣으면 보호자가 더 빨리 확인해요.</div></div>`;
+  }
+  const badge=t=> ['notice','supply','letter'].includes(t) ? S.items[t].filter(i=>!i.done).length : 0;
+  const tile=(t)=>`<button class="tile ${TYPES[t].cls}" data-go="${t}">${badge(t)?`<span class="badge">${badge(t)}</span>`:''}<span class="ic">${TYPES[t].emoji}</span>${TYPES[t].name}</button>`;
+  return inAppBanner()+alert+`<div class="grid">${['notice','supply','timetable','meal','letter','photo','welfare','settings'].map(tile).join('')}</div>`;
+}
+
+
+/* ---------- 식단표(중식) ---------- */
+let mealDraft={date:todayStr(),menu:'',img:null};
+function foodEmoji(n){
+  const m=[[/밥|죽|김밥|덮밥/,'🍚'],[/국|탕|찌개|수프/,'🥣'],[/김치|나물|샐러드|무침|채소|야채/,'🥬'],[/닭|치킨/,'🍗'],[/불고기|고기|돼지|소고기|갈비|햄|소시지|제육/,'🍖'],[/생선|고등어|갈치|조기|오징어|새우|어묵/,'🐟'],[/계란|달걀/,'🥚'],[/면|국수|우동|파스타|스파게티/,'🍜'],[/빵|토스트|샌드/,'🥪'],[/사과|배|귤|과일|바나나|포도|수박|딸기/,'🍎'],[/우유|요구르트|요거트/,'🥛'],[/두부/,'🧈'],[/감자|고구마/,'🥔'],[/떡/,'🍡']].find(([r])=>r.test(n));
+  return m?m[1]:'🍽️';
+}
+const menuList=t=>String(t||'').split(/[,\n、]+/).map(x=>x.trim()).filter(Boolean);
+function viewMeals(){
+  const add=S.role==='teacher'?`<button class="btn p block" style="margin-bottom:14px" data-a="mealform">＋ 식단 올리기</button>`:'';
+  const list=S.items.meal.slice().sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+  if(!list.length) return add+`<div class="empty"><div class="e">🍱</div>아직 올라온 식단이 없어요</div>`;
+  return add+list.map(m=>{
+    const today=m.date===todayStr();
+    return `<div class="card item" ${today?'style="border-color:var(--orange)"':''}>
+      <div class="row" style="align-items:flex-start"><div class="aac">🍱</div>
+        <div style="flex:1"><h3>${today?'오늘의 중식':'중식'}</h3><div class="meta">${esc(m.date)}</div></div>
+        <button class="speak ${speakingId==='m'+m.id?'on':''}" data-speak="m${m.id}" aria-label="읽어주기">${speakingId==='m'+m.id?'⏹':'🔊'}</button></div>
+      <div class="pick" style="margin:10px 0 4px">${menuList(m.menu).map(x=>`<span style="background:var(--orange-l);border-radius:16px;padding:8px 12px;font-weight:800">${foodEmoji(x)} ${esc(x)}</span>`).join('')}</div>
+      ${m.img?`<img class="pic" src="${m.img}" alt="오늘의 음식 사진">`:''}
+      ${S.role==='teacher'?`<div class="row" style="margin-top:10px"><button class="btn ghost sm" data-medit="${m.id}">✏️ 수정</button><button class="btn ghost sm" data-del="meal:${m.id}">🗑 삭제</button></div>`:''}
+    </div>`; }).join('');
+}
+function readMealDraft(){ const d=document.getElementById('md'), t=document.getElementById('mm'); if(d) mealDraft.date=d.value; if(t) mealDraft.menu=t.value; }
+function viewMealForm(){
+  return `<div class="card">
+    <label class="f" style="margin-top:0">날짜</label><input id="md" type="date" class="in" value="${esc(mealDraft.date)}">
+    <label class="f">오늘의 중식 메뉴 <span class="small">(쉼표나 줄바꿈으로 나눠 주세요)</span></label>
+    <textarea id="mm" class="in" placeholder="예) 잡곡밥, 미역국, 닭갈비, 배추김치, 사과">${esc(mealDraft.menu)}</textarea>
+    <label class="f">음식 사진 <span class="small">(선택)</span></label>
+    ${mealDraft.img?`<img class="pic" style="width:100%;border-radius:16px" src="${mealDraft.img}" alt=""><button class="btn ghost sm" style="margin-top:8px" id="mrm">사진 빼기</button>`
+      :`<label class="btn m block">📷 음식 사진 고르기<input id="mf" type="file" accept="image/*" hidden></label>`}
+    <button class="btn block" style="margin-top:18px" id="msave">${mealDraft.editId?'수정 완료':'올리기'}</button>
+  </div>`;
+}
+function pickMealPhoto(file){
+  if(!file) return;
+  const img=new Image(), url=URL.createObjectURL(file);
+  img.onload=()=>{ const max=900,k=Math.min(1,max/Math.max(img.width,img.height)); const c=document.createElement('canvas'); c.width=img.width*k; c.height=img.height*k; c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url); mealDraft.img=c.toDataURL('image/jpeg',.7); render(); };
+  img.onerror=()=>toast('사진을 불러오지 못했어요');
+  img.src=url;
+}
+function saveMeal(){
+  readMealDraft();
+  if(!menuList(mealDraft.menu).length && !mealDraft.img){ toast('메뉴를 적거나 사진을 골라 주세요'); return; }
+  if(mealDraft.editId){ const m=S.items.meal.find(x=>x.id===mealDraft.editId); if(m){ m.date=mealDraft.date||todayStr(); m.menu=mealDraft.menu.trim(); m.img=mealDraft.img; } toast('식단을 수정했어요'); }
+  else { S.items.meal.push({id:S.nextId++,date:mealDraft.date||todayStr(),menu:mealDraft.menu.trim(),img:mealDraft.img}); toast('식단을 올렸어요'); }
+  save(); mealDraft={date:todayStr(),menu:'',img:null}; go('list',{t:'meal'});
+}
+
+
+/* ---------- 사진 수정 ---------- */
+let photoDraft={id:0,title:'',img:''};
+function readPhotoDraft(){ const t=document.getElementById('pt'); if(t) photoDraft.title=t.value; }
+function viewPhotoForm(){
+  return `<div class="card"><img class="pic" style="width:100%;border-radius:16px;margin:0" src="${photoDraft.img}" alt="">
+    <label class="btn m block" style="margin-top:10px">🔄 사진 바꾸기<input id="pef" type="file" accept="image/*" hidden></label>
+    <label class="f">제목</label><input id="pt" class="in" value="${esc(photoDraft.title)}">
+    <button class="btn block" style="margin-top:18px" id="psave">수정 완료</button></div>`;
+}
+function shrinkFile(file,cb){
+  const img=new Image(), url=URL.createObjectURL(file);
+  img.onload=()=>{ const k=Math.min(1,900/Math.max(img.width,img.height)); const c=document.createElement('canvas'); c.width=img.width*k; c.height=img.height*k; c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url); cb(c.toDataURL('image/jpeg',.7)); };
+  img.onerror=()=>toast('사진을 불러오지 못했어요'); img.src=url;
+}
+function savePhotoEdit(){ readPhotoDraft(); const p=S.items.photo.find(x=>x.id===photoDraft.id); if(p){ p.title=photoDraft.title.trim()||'활동 사진'; p.img=photoDraft.img; } save(); toast('수정했어요'); go('list',{t:'photo'}); }
+
+/* ---------- 복지관 소식 ---------- */
+const API_BASE = location.hostname.endsWith('netlify.app') ? '' : 'https://alrimbom-demo-team6.netlify.app';
+/* ★ 기본 복지관(코드에 고정): 모든 학부모 화면에 항상 나옵니다.
+   돌봄교사가 앱의 "복지관 관리"에서 추가한 복지관은 이 기기에 저장되어 학부모 복지관 고르기에 함께 나와요.
+   예) {name:'○○복지관',preset:true,boards:[{k:'notice',label:'공지사항',url:'https://.../board.php?bo_table=notice',fixed:true}]} */
+const PRESET=[
+  {name:'안양시관악장애인종합복지관',preset:true,boards:[
+    {k:'notice',label:'공지사항',url:'https://www.ajwc.or.kr/bbs/board.php?bo_table=notice',fixed:true},
+    {k:'recruit',label:'참여자 모집',url:'https://www.ajwc.or.kr/bbs/board.php?bo_table=recruit_user',fixed:true}
+    /* 채용공고 게시판 주소를 알게 되면 여기에 한 줄 더: ,{k:'job',label:'채용공고',url:'https://www.ajwc.or.kr/bbs/board.php?bo_table=○○○',fixed:true} */]}
+];
+const BOARD_ICON={notice:'📢',recruit:'🙋',job:'💼',news:'🗞️'};
+// ★ 모두에게 공유되는 데이터: 호스팅 폴더의 data.json (돌봄교사가 '모두에게 공유하기'로 만들어 올려요)
+let SHARED={centers:[],snaps:{}};
+async function loadShared(){
+  try{
+    const r=await fetch('data.json?'+Date.now(),{cache:'no-store'}); if(!r.ok) return;
+    const d=await r.json();
+    SHARED={centers:(d.centers||[]).filter(c=>c&&c.name&&(c.boards||[]).length).map(c=>({id:'s_'+c.name,name:c.name,boards:c.boards,shared:true})),snaps:d.snaps||{}};
+    if(route.p==='list'&&route.t==='welfare') render();
+  }catch(e){}
+}
+const allCenters=()=>{ const seen=new Set(PRESET.map(p=>p.name)), out=PRESET.slice();
+  SHARED.centers.concat(S.centers||[]).forEach(c=>{ if(c&&c.name&&!seen.has(c.name)){ seen.add(c.name); out.push(c); } });
+  return out; };
+const getSnap=key=>{ const a=(S.snaps||{})[key], b=SHARED.snaps[key]; if(a&&b) return (b.date||'')>(a.date||'')?b:a; return a||b||null; };
+function shareExport(){
+  const names=new Set(), centers=[];
+  SHARED.centers.concat(S.centers||[]).forEach(c=>{ if(!c||!c.name||PRESET.some(p=>p.name===c.name)||names.has(c.name)) return; names.add(c.name);
+    centers.push({name:c.name,boards:boardsOf(c).map(b=>({k:b.k,label:b.label,url:b.url,fixed:!!b.fixed}))}); });
+  const json=JSON.stringify({centers,snaps:Object.assign({},SHARED.snaps,S.snaps||{}),updated:todayStr()},null,1);
+  try{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([json],{type:'application/json'})); a.download='data.json'; document.body.appendChild(a); a.click(); a.remove(); }catch(e){}
+  try{ navigator.clipboard&&navigator.clipboard.writeText(json).catch(()=>{}); }catch(e){}
+  toast('data.json 을 만들었어요. www 폴더의 data.json 을 이 파일로 바꿔 올려 주세요');
+}
+const boardsOf=c=>{ if(c.boards&&c.boards.length) return c.boards; const u=c.board||c.url||c.home||''; return u?[{k:'notice',label:'공지사항',url:u}]:[]; };
+const wNews={};   // 복지관 이름 -> {state:'loading'|'ok'|'err', items:[], t}
+async function loadNews(name,force){
+  const c=wNews[name]; if(c&&c.state==='loading') return;
+  if(!force&&c&&c.state==='ok'&&Date.now()-c.t<600000) return;
+  wNews[name]={state:'loading',items:[],t:0};
+  try{
+    const r=await fetch(API_BASE+'/.netlify/functions/news?q='+encodeURIComponent(name)); if(!r.ok) throw new Error(r.status);
+    const d=await r.json(); wNews[name]={state:'ok',items:d.items||[],t:Date.now()};
+  }catch(e){ wNews[name]={state:'err',items:[],t:Date.now()}; }
+  if(route.p==='list'&&route.t==='welfare') render();
+}
+const wNotice={}; // '복지관이름|게시판종류' -> {state, items, t}
+/* ===== 게시판 목록 읽기 (서버 notices.js 와 같은 코드) ===== */
+const BH=(()=>{
+const decodeEnt = s => String(s || '')
+  .replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')
+  .replace(/&#39;|&apos;/g, "'").replace(/&#(\d+);/g, (_, n) => String.fromCharCode(+n)).replace(/&amp;/g, '&');
+const clean = s => decodeEnt(String(s || '').replace(/<(script|style)[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
+const attr = (attrs, name) => { const m = attrs.match(new RegExp('\\b' + name + '\\s*=\\s*("([^"]*)"|\'([^\']*)\'|([^\\s>]+))', 'i')); return m ? decodeEnt(m[2] ?? m[3] ?? m[4] ?? '') : ''; };
+const abs = (href, base) => { try { return new URL(href, base).href; } catch (e) { return ''; } };
+
+
+const pad2 = n => String(n).padStart(2, '0');
+function findDate(block) {
+  const text = clean(block.replace(/<a\b[\s\S]*?<\/a>/gi, ' '));   // 제목 속 숫자와 헷갈리지 않게 링크 밖에서만 찾기
+  let m = text.match(/(20\d{2})\s*[-./]\s*(\d{1,2})\s*[-./]\s*(\d{1,2})/);
+  if (m) return `${m[1]}-${pad2(m[2])}-${pad2(m[3])}`;
+  m = text.match(/(?<!\d)(\d{2})\s*[-./]\s*(\d{1,2})\s*[-./]\s*(\d{1,2})(?!\d)/);
+  if (m && +m[2] >= 1 && +m[2] <= 12 && +m[3] >= 1 && +m[3] <= 31) return `20${m[1]}-${pad2(m[2])}-${pad2(m[3])}`;
+  m = text.match(/(?<![\d])(\d{1,2})\s*[-./]\s*(\d{1,2})(?![\d])/);
+  if (m && +m[1] >= 1 && +m[1] <= 12 && +m[2] >= 1 && +m[2] <= 31) {
+    const now = new Date(Date.now() + 9 * 3600 * 1000);                 // 한국 시간 기준
+    let y = now.getUTCFullYear();
+    if (Date.UTC(y, +m[1] - 1, +m[2]) > now.getTime() + 2 * 86400000) y -= 1;   // 미래 날짜면 작년 글
+    return `${y}-${pad2(m[1])}-${pad2(m[2])}`;
+  }
+  m = clean(block).match(/(20\d{2})\s*[-./]\s*(\d{1,2})\s*[-./]\s*(\d{1,2})/);
+  return m ? `${m[1]}-${pad2(m[2])}-${pad2(m[3])}` : '';
+}
+// 항목별 칸(분류·상태·작성자·조회수·마감일)을 뽑아 내기 위한 도우미
+const STATUS_RE = /^(모집중|진행중|접수중|채용중|마감|모집마감|접수마감|채용마감|종료|완료|채용완료|상시)$/;
+function findDeadline(text, date) {
+  const m = text.match(/(?:~|∼|마감|까지)\s*:?\s*(?:(20\d{2})\s*[-./년]\s*)?(\d{1,2})\s*[-./월]\s*(\d{1,2})/);
+  if (!m) return '';
+  const mo = +m[2], d = +m[3];
+  if (mo < 1 || mo > 12 || d < 1 || d > 31) return '';
+  let y = m[1] ? +m[1] : +date.slice(0, 4);
+  let out = `${y}-${pad2(mo)}-${pad2(d)}`;
+  if (!m[1] && out < date) out = `${y + 1}-${pad2(mo)}-${pad2(d)}`;   // 12월 글의 1월 마감 등
+  return out;
+}
+function rowExtras(b, bestText) {
+  const x = { cat: '', writer: '', views: '', status: '', pinned: false };
+  for (const a of b.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
+    const t = clean(a[2]);
+    if (t && t !== bestText && t.length <= 12 && (/cate/i.test(attr(a[1], 'class')) || /[?&]sca=/.test(attr(a[1], 'href')))) { x.cat = t.replace(/^\[|\]$/g, ''); break; }
+  }
+  let numSeen = false;
+  for (const c of b.matchAll(/<t[dh]\b([^>]*)>([\s\S]*?)<\/t[dh]>/gi)) {
+    const cls = attr(c[1], 'class');
+    const t = clean(c[2]);
+    if (/td_num2/.test(cls)) { numSeen = true; if (/공지/.test(t)) x.pinned = true; continue; }          // 그누보드: 번호 칸
+    if (t === '공지') { numSeen = true; x.pinned = true; continue; }                                 // 번호 칸에 '공지'
+    if (!t || t.includes(bestText.slice(0, 12))) continue;
+    if (/\d\s*[-./]\s*\d/.test(t)) continue;                       // 날짜 칸
+    if (STATUS_RE.test(t)) { x.status = t; continue; }
+    if (/cate|gubun|type|part/i.test(cls) && t.length <= 12) { x.cat = x.cat || t; continue; }
+    if (/name|writer|author/i.test(cls)) { x.writer = t.slice(0, 20); continue; }
+    if (/hit|view|read|count/i.test(cls) && /^\d+$/.test(t)) { x.views = t; continue; }
+    if (/^\d{1,7}$/.test(t)) { if (!numSeen) numSeen = true; else x.views = x.views || t; continue; }   // 번호 → 조회수 순서
+    if (!x.writer && t.length <= 20 && !/^(공지|NEW)$/i.test(t)) x.writer = t;
+  }
+  return x;
+}
+function parseList(html, base) {
+  const rows = [], seen = new Set();
+  const blocks = html.match(/<tr\b[\s\S]*?<\/tr>|<li\b[\s\S]*?<\/li>|<dl\b[\s\S]*?<\/dl>/gi) || [];
+  for (const b of blocks) {
+    if (b.length > 4000) continue;
+    const date = findDate(b);
+    if (!date) continue;
+    let best = null;
+    for (const a of b.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
+      const text = clean(a[2]).replace(/^(공지|NEW|new|N)\s+/, '').replace(/\s*(NEW|new)$/, '');
+      if (text.length < 4 || /^(이전|다음|목록|more|더보기|처음|마지막)/i.test(text)) continue;
+      if (!best || text.length > best.text.length) best = { text, attrs: a[1] };
+    }
+    if (!best || seen.has(best.text)) continue;
+    seen.add(best.text);
+    const href = attr(best.attrs, 'href');
+    const link = (!href || /^(javascript|#)/i.test(href)) ? base : abs(href, base);   // 글 주소를 알 수 없으면 목록 주소로
+    const ex = rowExtras(b, best.text);
+    let title = best.text;
+    const bm = title.match(/^\[([^\]]{1,10})\]\s*(.+)$/);
+    if (bm) { if (!ex.cat) ex.cat = bm[1]; title = bm[2]; }
+    const sm = title.match(/^[\(\[](마감|모집중|접수중|진행중|모집마감|접수마감|종료)[\)\]]\s*(.+)$/);
+    if (sm) { if (!ex.status) ex.status = sm[1]; title = sm[2]; }
+    const deadline = findDeadline(clean(b), date);
+    rows.push({ title: title.slice(0, 120), link: link || base, date, cat: ex.cat, status: ex.status, writer: ex.writer, views: ex.views, deadline, pinned: ex.pinned });
+  }
+  rows.sort((a, b) => (b.pinned - a.pinned) || b.date.localeCompare(a.date));
+  return rows;
+}
+
+
+return {parseList,findDeadline};
+})();
+const parseBoardHtml=BH.parseList;
+const UA_M='Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Mobile Safari/537.36';
+const isNative=()=>{ try{ return !!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform()); }catch(e){ return false; } };
+// 설치한 앱(APK)에서는 휴대폰이 직접 홈페이지에 접속해요 (서버 차단·CORS 문제 없음)
+async function nativeGet(url){
+  const H=window.Capacitor.Plugins&&window.Capacitor.Plugins.CapacitorHttp; if(!H) throw new Error('no native http');
+  const r=await H.request({url,method:'GET',responseType:'arraybuffer',connectTimeout:8000,readTimeout:8000,
+    headers:{'User-Agent':UA_M,'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8','Accept-Language':'ko-KR,ko;q=0.9','Referer':new URL(url).origin+'/'}});
+  if(r.status>=400) throw new Error('http '+r.status);
+  if(typeof r.data!=='string') return String(r.data);
+  let bytes; try{ bytes=Uint8Array.from(atob(r.data),c=>c.charCodeAt(0)); }catch(e){ return r.data; }
+  const h=r.headers||{}, ct=h['Content-Type']||h['content-type']||'';
+  let cs=(ct.match(/charset=([\w-]+)/i)||[])[1];
+  if(!cs){ const head=new TextDecoder('latin1').decode(bytes.subarray(0,3000)); cs=(head.match(/<meta[^>]+charset=["']?([\w-]+)/i)||[])[1]; }
+  cs=(cs||'utf-8').toLowerCase(); if(/^(ks_c_5601-1987|euc_kr|cp949|ms949)$/.test(cs)) cs='euc-kr';
+  try{ return new TextDecoder(cs).decode(bytes); }catch(e){ return new TextDecoder('utf-8').decode(bytes); }
+}
+const wShown={};  // 화면에 보이는 목록 (읽어주기용)
+async function loadBoard(c,b,force){
+  const key=c.name+'|'+b.k, cur=wNotice[key]; if(cur&&cur.state==='loading') return;
+  if(!force&&cur&&cur.state==='ok'&&Date.now()-cur.t<600000) return;
+  wNotice[key]={state:'loading',items:[],t:0};
+  let items=null, reason='';
+  if(isNative()){ try{ const it=parseBoardHtml(await nativeGet(b.url),b.url); if(it.length) items=it; else reason='앱에서 읽었지만 목록 모양을 못 찾음'; }catch(e){ reason='앱 접속 '+String((e&&e.message)||e).slice(0,40); } }
+  if(!items){
+    try{
+      const r=await fetch(API_BASE+'/.netlify/functions/notices?q='+encodeURIComponent(c.name)+'&url='+encodeURIComponent(b.url)+(b.fixed?'&fixed=1':'')); if(!r.ok) throw new Error(r.status);
+      const d=await r.json(); if((d.items||[]).length) items=d.items; else reason=reason||d.reason||d.status||'';
+    }catch(e){ reason=reason||'서버 연결 실패'; }
+  }
+  wNotice[key]=items?{state:'ok',items,reason:'',live:true,t:Date.now()}:{state:'ok',items:[],reason,t:Date.now()};
+  if(route.p==='list'&&route.t==='welfare') render();
+}
+// 돌봄교사가 홈페이지 목록을 복사해서 붙여넣으면, 자동으로 못 읽는 사이트도 학부모에게 보여줄 수 있어요
+function parsePasted(text,base){
+  const out=[], seen=new Set(), SM=/^[\(\[](마감|모집중|접수중|진행중|모집마감|접수마감|종료)[\)\]]\s*(.+)$/;
+  for(let ln of String(text).split(/\r?\n/)){
+    ln=ln.trim(); if(!ln) continue;
+    let cells=ln.split('\t').map(s=>s.trim()).filter(Boolean);
+    if(cells.length<3){ const m=ln.match(/^(공지|\d+)\s+(.+?)\s+(\S+)\s+(20\d\d\s*[-./]\s*\d{1,2}\s*[-./]\s*\d{1,2})\s+(\d+)\s*$/); if(!m) continue; cells=[m[1],m[2],m[3],m[4],m[5]]; }
+    const di=cells.findIndex(x=>/^20\d\d\s*[-./]\s*\d{1,2}\s*[-./]\s*\d{1,2}$/.test(x)); if(di<0) continue;
+    const dm=cells[di].match(/(20\d\d)\s*[-./]\s*(\d{1,2})\s*[-./]\s*(\d{1,2})/); const date=`${dm[1]}-${String(dm[2]).padStart(2,'0')}-${String(dm[3]).padStart(2,'0')}`;
+    const rest=cells.filter((x,i)=>i!==di); let pinned=false;
+    if(/^(공지|\d+)$/.test(rest[0])){ pinned=rest[0]==='공지'; rest.shift(); }
+    let views=''; if(rest.length>=3&&/^\d+$/.test(rest[rest.length-1])) views=rest.pop();
+    let title=rest[0]; if(!title||seen.has(title)) continue; seen.add(title);
+    let status=''; const sm=title.match(SM); if(sm){ status=sm[1]; title=sm[2]; }
+    out.push({title:title.slice(0,120),link:base,date,cat:'',status,writer:(rest[1]||'').slice(0,20),views,deadline:BH.findDeadline(title,date),pinned});
+  }
+  out.sort((a,b)=>(b.pinned-a.pinned)||b.date.localeCompare(a.date));
+  return out;
+}
+const normT=s=>String(s||'').replace(/^[\(\[][^\)\]]{1,10}[\)\]]\s*/,'').replace(/\s+/g,'');
+// 붙여넣을 때 같이 복사된 HTML 에서 링크(<a href>)만 따로 뽑아, 제목이 같은 글에 상세 주소를 붙여요
+let mergeInfo={n:0,linked:0,hasHtml:false,anchors:0};
+function pastedLinks(html,base){
+  const m=[]; if(!html) return m;
+  try{
+    const doc=new DOMParser().parseFromString(html,'text/html');
+    doc.querySelectorAll('a').forEach(a=>{
+      let h=a.getAttribute('href')||'';
+      if(!h||/^(javascript|mailto|tel):|^#/i.test(h)){ h=a.getAttribute('data-url')||a.getAttribute('data-href')||((a.getAttribute('onclick')||'').match(/['"]([^'"]*(?:wr_id|board\.php|view|read)[^'"]*)['"]/)||[])[1]||''; }
+      if(!h||/^(javascript|mailto|tel):|^#/i.test(h)) return;
+      let u; try{ u=new URL(h,base||location.href).href; }catch(e){ return; }
+      const k=normT(a.textContent); if(k.length>=3) m.push([k,u]);
+    });
+  }catch(e){}
+  return m;
+}
+function mergePasted(text,html,base){
+  let ti=parsePasted(text,base); const links=pastedLinks(html,base);
+  if(!ti.length&&html){ try{ ti=parseBoardHtml(html,base)||[]; }catch(e){} }
+  ti.forEach(i=>{
+    const k=normT(i.title);
+    const f=links.find(([x])=>x===k)||links.find(([x])=>x.length>6&&k.length>6&&(x.includes(k)||k.includes(x)));
+    if(f) i.link=f[1];
+  });
+  mergeInfo={n:ti.length,linked:ti.filter(i=>i.link&&i.link!==base).length,hasHtml:!!html,anchors:links.length};
+  return ti;
+}
+let pDraft={key:'',text:'',html:''};
+loadShared();
+const pBaseUrl=()=>{ const [nm,k]=(pDraft.key||'').split('|'); const c=allCenters().find(x=>x.name===nm), bd=c&&boardsOf(c).find(x=>x.k===k); return bd?normUrl(bd.url):''; };
+function viewPForm(){
+  const [nm,k]=pDraft.key.split('|'); const c=allCenters().find(x=>x.name===nm); const bd=c&&boardsOf(c).find(x=>x.k===k);
+  return `<div class="card"><div class="sec-h"><span class="si">✂️</span>${esc(nm)} ${esc(bd?bd.label:'')}</div>
+    <ol class="small" style="line-height:1.7;margin:0 0 10px;padding-left:20px"><li>아래 버튼으로 홈페이지 게시판을 열어요.</li><li>목록 표를 끌어서 선택한 뒤 복사해요.</li><li>이 화면으로 돌아와 아래 칸에 붙여넣고 [올리기]를 눌러요.</li></ol>
+    ${bd?`<a class="btn m sm block" href="${esc(normUrl(bd.url))}" target="_blank" rel="noopener">🌐 게시판 열기</a>`:''}
+    <details class="small" style="margin-top:10px"><summary style="font-weight:800">글을 눌러도 게시판으로만 갈 때 (PC에서 링크까지 복사하는 방법)</summary>
+      <ol style="line-height:1.7;margin:6px 0 0;padding-left:20px"><li>PC 크롬에서 게시판을 열고 키보드 <b>F12</b>를 눌러요.</li><li>왼쪽 위 화살표(요소 선택)를 누르고 게시글 표를 클릭해요.</li><li>파란 줄에서 <b>&lt;table&gt;</b>이 보이도록 위로 올라간 뒤, 그 줄에서 마우스 오른쪽 → <b>Copy → Copy outerHTML</b></li><li>아래 칸에 그대로 붙여넣고 [올리기]를 누르면 글마다 상세 주소가 붙어요.</li></ol></details>
+    <textarea id="pt" class="in" style="min-height:200px;margin-top:10px" placeholder="번호  제목  작성자  등록일  조회수 …">${esc(pDraft.text)}</textarea>
+    <div id="pst" class="small" style="margin-top:6px;font-weight:800">붙여넣으면 글 링크를 찾았는지 여기에 알려 드려요.</div>
+    <button class="btn block" style="margin-top:12px" id="plsave">올리기</button>
+    ${(S.snaps||{})[pDraft.key]?`<button class="btn ghost sm block" style="margin-top:8px" data-a="pclear">붙여넣은 목록 지우기</button>`:''}</div>`;
+}
+function savePaste(){
+  pDraft.text=($('#pt')||{}).value||''; const [nm,k]=pDraft.key.split('|');
+  if(/<(table|tr|a)\b/i.test(pDraft.text)){ pDraft.html=pDraft.text; pDraft.text=''; }   // 개발자도구에서 복사한 HTML 소스를 붙여넣은 경우
+  const c=allCenters().find(x=>x.name===nm), bd=c&&boardsOf(c).find(x=>x.k===k);
+  const items=mergePasted(pDraft.text,pDraft.html,bd?normUrl(bd.url):'');
+  if(!items.length){ toast('목록을 읽지 못했어요. 표 전체를 복사했는지 확인해 주세요'); return; }
+  S.snaps=S.snaps||{}; S.snaps[pDraft.key]={items,date:todayStr()}; save(); wFilter=nm; wBoard=k; toast(items.length+'개를 올렸어요 · 상세 링크 '+mergeInfo.linked+'개 연결'+(!mergeInfo.hasHtml?' (복사에 링크 정보가 없었어요)':(mergeInfo.anchors===0?' (복사에 링크가 없었어요)':''))); go('list',{t:'welfare'});
+}
+const dot=iso=>String(iso||'').replace(/-/g,'.');
+const dday=iso=>{ if(!iso) return null; const a=new Date(iso+'T00:00:00'), b=new Date(todayStr()+'T00:00:00'); return isNaN(a)?null:Math.round((a-b)/86400000); };
+function noticeCard(i,c,b,idx){
+  const dd=dday(i.deadline), dn=dday(i.date), sk=c.name+'|'+b.k+'|'+idx;
+  const chips=[];
+  if(i.pinned) chips.push('<span class="tg p">공지</span>');
+  if(i.cat) chips.push(`<span class="tg c">${esc(i.cat)}</span>`);
+  const st=i.status||((dd!==null&&dd<0)?'마감':'');
+  if(st) chips.push(`<span class="tg ${/마감|종료|완료/.test(st)?'x':'o'}">${esc(st)}</span>`);
+  if(dn!==null&&dn<=0&&dn>=-7) chips.push('<span class="tg n">NEW</span>');
+  const meta=[i.writer?esc(i.writer):'', i.date?dot(i.date):'', i.views?'조회 '+esc(i.views):''].filter(Boolean).join(' · ');
+  const dl=i.deadline?`<div class="dl">⏰ 마감 ${dot(i.deadline)}${dd!==null&&dd>=0?' · '+(dd===0?'오늘 마감':'D-'+dd):''}</div>`:'';
+  return `<div class="ni"><div class="row" style="align-items:flex-start;gap:8px"><a class="nia" href="${esc(i.link)}" target="_blank" rel="noopener">${chips.length?`<div>${chips.join('')}</div>`:''}<b>${esc(i.title)}</b><div class="nm">${meta}</div>${dl}</a>
+    <button class="speak ${speakingId==='n'+sk?'on':''}" data-nspeak="${esc(sk)}" aria-label="읽어주기">${speakingId==='n'+sk?'⏹':'🔊'}</button></div></div>`;
+}
+function boardBlock(c,b){
+  const key=c.name+'|'+b.k;
+  if(!wNotice[key]) loadBoard(c,b);
+  const n=wNotice[key]||{state:'loading',items:[]}, snap=getSnap(key);
+  const head=`<div class="row" style="margin:4px 0 8px"><div style="flex:1;font-weight:900">${BOARD_ICON[b.k]||'📋'} ${esc(c.name)} ${esc(b.label)}</div><button class="btn ghost sm" data-nrefresh="${esc(key)}" aria-label="새로고침">🔄</button></div>`;
+  const all=`<a class="btn m sm block" style="margin-top:8px" href="${esc(normUrl(b.url))}" target="_blank" rel="noopener">📋 ${esc(b.label)} 전체 보기</a>`;
+  const paste=S.role==='teacher'&&!n.live?`<button class="btn ghost sm block" style="margin-top:8px" data-a="wpaste" data-key="${esc(key)}">✂️ 돌봄교사: 홈페이지 목록 복사해서 붙여넣기</button>`:'';
+  let items=n.items, fromSnap=false;
+  if(!items.length&&snap&&snap.items.length&&n.state!==undefined){ items=snap.items; fromSnap=true; }
+  wShown[key]=items;
+  let body;
+  if(items.length){
+    const note=fromSnap?`<p class="small" style="margin:0 0 8px">✋ 돌봄교사가 올려 둔 목록이에요 (${dot(snap.date)} 기준)${n.state==='loading'?' · 최신 목록을 확인하는 중…':''}</p>`:'';
+    body=note+items.slice(0,10).map((i,x)=>noticeCard(i,c,b,x)).join('')+all+paste;
+  }
+  else if(n.state==='loading') body='<p class="small" style="margin:0 0 10px">⏳ 복지관 홈페이지에서 불러오는 중이에요… (처음엔 몇 초 걸려요)</p>';
+  else body='<p class="small" style="margin:0 0 10px">목록을 읽지 못했어요. 아래 버튼으로 홈페이지에서 직접 볼 수 있어요.'+(S.role==='teacher'&&n.reason?` <br>(돌봄교사용 원인 표시: ${esc(n.reason)})`:'')+'</p>'+all+paste;
+  return `<div class="card" style="padding:12px">${head}${body}</div>`;
+}
+const fmtDate=iso=>{ if(!iso) return ''; const d=new Date(iso); return isNaN(d)?'':`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`; };
+function newsBlock(c){
+  if(!wNews[c.name]) loadNews(c.name);
+  const n=wNews[c.name]||{state:'loading',items:[]};
+  const head=`<div class="row" style="margin:4px 0 8px"><div style="flex:1;font-weight:900">🗞️ ${esc(c.name)} 최신 뉴스</div><button class="btn ghost sm" data-wrefresh="${esc(c.name)}" aria-label="새로고침">🔄</button></div>`;
+  let body;
+  if(n.state==='loading') body='<p class="small" style="margin:0 0 10px">⏳ 최신 뉴스를 불러오는 중이에요…</p>';
+  else if(n.state==='err') body=`<p class="small" style="margin:0 0 10px">뉴스를 불러오지 못했어요. 인터넷 연결을 확인하고 🔄를 눌러 주세요.</p>`;
+  else if(!n.items.length) body=`<p class="small" style="margin:0 0 10px">최근 1년 안에 이 복지관 이름이 들어간 뉴스가 없어요.</p>`;
+  else body=n.items.slice(0,5).map(i=>`<a class="nw" href="${esc(i.link)}" target="_blank" rel="noopener"><b>${esc(i.title)}</b><span>${esc(i.source||'')} ${esc(fmtDate(i.date))}</span></a>`).join('');
+  return `<div class="card" style="padding:12px">${head}${body}</div>`;
+}
+let wFilter='', wBoard='notice', wDraft={center:'',title:'',body:'',date:todayStr()}, cDraft={};
+const normUrl=u=>{ u=String(u||'').trim(); if(!u) return ''; return /^https?:\/\//i.test(u)?u:'https://'+u; };
+function addCenter(){
+  const g=id=>($('#'+id)?.value||'').trim();
+  const name=g('wcn').replace(/\|/g,' '), nu=g('wcb'), ru=g('wcr'), ju=g('wcj');
+  if(!name){ toast('복지관 이름을 입력해 주세요'); return; }
+  if(!nu){ toast('공지사항(또는 홈페이지) 주소를 입력해 주세요'); return; }
+  if(allCenters().some(c=>c.name===name&&c.id!==cDraft.id)){ toast('이미 등록한 복지관이에요'); return; }
+  const boards=[{k:'notice',label:'공지사항',url:normUrl(nu)}]; if(ru) boards.push({k:'recruit',label:'참여자 모집',url:normUrl(ru),fixed:true}); if(ju) boards.push({k:'job',label:'채용공고',url:normUrl(ju),fixed:true});
+  if(cDraft.id){ const c=S.centers.find(x=>x.id===cDraft.id); if(c){ Object.keys(wNotice).forEach(k=>{ if(k.startsWith(c.name+'|')) delete wNotice[k]; }); if(wFilter===c.name) wFilter=name; c.name=name; c.boards=boards; delete c.url; delete c.board; delete c.home; } toast('수정했어요'); }
+  else { S.centers.push({id:S.nextId++,name,boards}); toast('복지관을 등록했어요. 학부모 화면에서 고를 수 있어요'); }
+  save(); cDraft={}; render();
+}
+function manageCard(){
+  const cs=allCenters(), d=cDraft;
+  const list=cs.map(c=>`<div class="wc"><div class="row" style="margin-bottom:4px"><div style="flex:1;font-weight:900">${esc(c.name)}${(c.preset||c.shared)?' <span class="tg c">'+(c.preset?'기본':'공유됨')+'</span>':''}</div>${(c.preset||c.shared)?'':`<button class="btn ghost sm" data-wcedit="${c.id}" aria-label="고치기">✏️</button><button class="btn ghost sm" data-wdel="${c.id}" aria-label="목록에서 빼기">🗑</button>`}</div>
+    <div class="small">${boardsOf(c).map(b=>esc(b.label)).join(' · ')||'게시판 주소가 없어요 (✏️로 넣어 주세요)'}</div></div>`).join('');
+  return `<div class="card"><div class="sec-h"><span class="si">🏥</span>복지관 관리 (돌봄교사 전용)</div>${list}
+    <label class="f">${d.id?'복지관 고치기':'복지관 추가'}</label>
+    <input id="wcn" class="in" placeholder="복지관 이름 (예: 안양시○○장애인복지관)" value="${esc(d.name||'')}">
+    <input id="wcb" class="in" style="margin-top:6px" placeholder="공지사항 게시판 또는 홈페이지 주소" inputmode="url" value="${esc(d.notice||'')}">
+    <input id="wcr" class="in" style="margin-top:6px" placeholder="참여자 모집 게시판 주소 (없으면 비워 두세요)" inputmode="url" value="${esc(d.recruit||'')}">
+    <input id="wcj" class="in" style="margin-top:6px" placeholder="채용공고 게시판 주소 (없으면 비워 두세요)" inputmode="url" value="${esc(d.job||'')}">
+    <button class="btn block" style="margin-top:12px" data-a="waddc">${d.id?'수정 완료':'＋ 복지관 등록'}</button>
+    ${d.id?'<button class="btn ghost sm block" style="margin-top:8px" data-a="wcancel">취소</button>':''}
+    <p class="small" style="margin:10px 0 0">등록하면 이 기기의 학부모 화면 “복지관 고르기”에 바로 나타나요.</p>
+    <hr class="s"><div style="font-weight:900;margin-bottom:6px">🔗 링크로 접속하는 모든 사람에게 보이게 하기</div>
+    <p class="small" style="margin:0 0 8px">지금 등록한 복지관과 붙여넣은 목록은 이 기기에만 저장돼요. 아래 버튼으로 <b>data.json</b> 을 만들어 호스팅 폴더(www)의 같은 이름 파일과 바꿔 올리면, 링크를 받은 모든 사람 화면에 나타나요.</p>
+    <button class="btn m block" data-a="wshare">📤 모두에게 공유하기 (data.json 만들기)</button></div>`;
+}
+function viewWelfare(){
+  const cs=allCenters();
+  if(!cs.some(c=>c.name===wFilter)) wFilter=cs[0].name;
+  const cur=cs.find(c=>c.name===wFilter);
+  const tabs=boardsOf(cur).concat([{k:'news',label:'뉴스'}]);
+  if(!tabs.some(t=>t.k===wBoard)) wBoard=tabs[0].k;
+  const chips=`<div class="small" style="margin:0 2px 6px;font-weight:800">🏥 복지관 고르기</div><div class="chipbar">${cs.map(c=>`<button class="${wFilter===c.name?'sel':''}" data-wf="${esc(c.name)}">${esc(c.name)}</button>`).join('')}</div>`;
+  const tabbar=`<div class="chipbar">${tabs.map(t=>`<button class="${wBoard===t.k?'sel':''}" data-wb="${esc(t.k)}">${BOARD_ICON[t.k]||'📋'} ${esc(t.label)}</button>`).join('')}</div>`;
+  const b=tabs.find(t=>t.k===wBoard);
+  const main=b.k==='news'?newsBlock(cur):boardBlock(cur,b);
+  const posts=S.items.welfare.slice().sort((a,c)=>c.date.localeCompare(a.date)||c.id-a.id).filter(x=>x.center===wFilter);
+  const add=S.role==='teacher'?`<button class="btn p block" style="margin-bottom:14px" data-a="wnew">＋ 소식 올리기</button>`:'';
+  const list=posts.length?posts.map(x=>`<div class="card item"><div class="row" style="align-items:flex-start"><div class="aac">🏥</div>
+      <div style="flex:1"><h3>${esc(x.title)}</h3><div class="meta">${esc(x.center)} · ${esc(x.date)}</div></div>
+      <button class="speak ${speakingId==='w'+x.id?'on':''}" data-speak="w${x.id}" aria-label="읽어주기">${speakingId==='w'+x.id?'⏹':'🔊'}</button></div>
+      <div class="body" style="margin-top:8px">${esc(x.body)}</div>
+      ${S.role==='teacher'?`<div class="row" style="margin-top:10px"><button class="btn ghost sm" data-wedit="${x.id}">✏️ 수정</button><button class="btn ghost sm" data-del="welfare:${x.id}">🗑 삭제</button></div>`:''}</div>`).join('')
+    :`<div class="empty"><div class="e">🏥</div>아직 올라온 소식이 없어요</div>`;
+  return chips+tabbar+main+`<div class="sec-h" style="margin:10px 2px 10px"><span class="si">📰</span>돌봄교사가 올린 소식</div>`+add+list+(S.role==='teacher'?`<div style="height:6px"></div>`+manageCard():'');
+}
+function readWDraft(){ const g=id=>document.getElementById(id); if(g('wc')){ wDraft.center=g('wc').value; wDraft.title=g('wt').value; wDraft.body=g('wb').value; wDraft.date=g('wd').value; } }
+function viewWForm(){
+  return `<div class="card"><label class="f" style="margin-top:0">복지관</label>
+    <select id="wc" class="in">${allCenters().map(c=>`<option value="${esc(c.name)}" ${c.name===wDraft.center?'selected':''}>${esc(c.name)}</option>`).join('')}</select>
+    <label class="f">제목</label><input id="wt" class="in" value="${esc(wDraft.title)}" placeholder="예) 가을 가족 프로그램 안내">
+    <label class="f">내용</label><textarea id="wb" class="in" placeholder="소식 내용을 적어 주세요">${esc(wDraft.body)}</textarea>
+    <label class="f">날짜</label><input id="wd" type="date" class="in" value="${esc(wDraft.date)}">
+    <button class="btn block" style="margin-top:18px" id="wsave">${wDraft.id?'수정 완료':'올리기'}</button></div>`;
+}
+function saveW(){
+  readWDraft();
+  if(!wDraft.center.trim()){ toast('복지관을 골라 주세요'); return; }
+  if(!wDraft.title.trim()||!wDraft.body.trim()){ toast('제목과 내용을 적어 주세요'); return; }
+  const name=wDraft.center.trim();
+  const rec={center:name,title:wDraft.title.trim(),body:wDraft.body.trim(),date:wDraft.date||todayStr()};
+  if(wDraft.id){ const x=S.items.welfare.find(v=>v.id===wDraft.id); if(x) Object.assign(x,rec); toast('수정했어요'); }
+  else { S.items.welfare.push({id:S.nextId++,...rec}); toast('소식을 올렸어요'); }
+  wFilter=name; save(); wDraft={center:'',title:'',body:'',date:todayStr()}; go('list',{t:'welfare'});
+}
+
+/* ---------- 목록 ---------- */
+function viewList(t){
+  if(t==='photo') return viewPhotos();
+  if(t==='meal') return viewMeals();
+  if(t==='welfare') return viewWelfare();
+  const list=S.items[t].slice().sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+  const add = S.role==='teacher' ? `<button class="btn p block" style="margin-bottom:14px" data-a="form" data-t="${t}">＋ ${TYPES[t].name} 등록</button>` : '';
+  if(!list.length) return add+`<div class="empty"><div class="e">${TYPES[t].emoji}</div>아직 등록된 내용이 없어요</div>`;
+  return add+list.map(i=>itemCard(i,t)).join('');
+}
+function itemCard(i,t){
+  const sum=i.summary||autoSummary(i.body);
+  return `<div class="card item">
+    <div class="row" style="align-items:flex-start"><div class="aac">${esc(i.icon)}</div>
+      <div style="flex:1"><h3>${esc(i.title)}</h3><div class="meta">${esc(i.date)}</div></div>
+      <button class="speak ${speakingId==='i'+i.id?'on':''}" data-speak="i${i.id}" aria-label="읽어주기">${speakingId==='i'+i.id?'⏹':'🔊'}</button></div>
+    <div class="sum">📌 ${esc(sum)}</div>
+    <div class="body">${esc(i.body)}</div>
+    ${i.img?`<img class="pic" src="${i.img}" alt="">`:''}
+    ${S.role==='parent'?`<button class="check ${i.done?'done':''}" data-done="${t}:${i.id}"><span class="box">${i.done?'✓':''}</span>${i.done?'확인했어요':'확인했으면 눌러 주세요'}</button>`
+      :`<div class="check ${i.done?'done':''}" style="cursor:default"><span class="box">${i.done?'✓':''}</span>${i.done?'학부모가 확인했어요':'아직 확인 전이에요'}</div><div class="row" style="margin-top:10px"><button class="btn ghost sm" data-edit="${t}:${i.id}">✏️ 수정</button><button class="btn ghost sm" data-del="${t}:${i.id}">🗑 삭제</button></div>`}
+  </div>`;
+}
+function viewPhotos(){
+  const add=S.role==='teacher'?`<label class="btn p block" style="margin-bottom:14px">📷 사진 올리기<input id="pf" type="file" accept="image/*" hidden></label>`:'';
+  const ph=S.items.photo;
+  if(!ph.length) return add+`<div class="empty"><div class="e">📷</div>아직 사진이 없어요</div>`;
+  return add+ph.slice().reverse().map(p=>`<div class="card item"><img class="pic" style="margin:0" src="${p.img}" alt="${esc(p.title)}"><h3 style="margin-top:10px">${esc(p.title)}</h3><div class="meta">${esc(p.date)}</div>${S.role==='teacher'?`<div class="row" style="margin-top:8px"><button class="btn ghost sm" data-pedit="${p.id}">✏️ 수정</button><button class="btn ghost sm" data-del="photo:${p.id}">🗑 삭제</button></div>`:''}</div>`).join('');
+}
+
+/* ---------- 등록 폼 (교사) ---------- */
+let draft={icon:'📢'};
+function viewForm(t){
+  return `<div class="card">
+    <label class="f" style="margin-top:0">그림 고르기 (보호자가 한눈에 알아봐요)</label>
+    <div class="pick">${ICONS.map(e=>`<button data-icon="${e}" class="${draft.icon===e?'sel':''}">${e}</button>`).join('')}</div>
+    <label class="f">제목</label><input id="ft" class="in" placeholder="예) 내일 준비물" value="${esc(draft.title||'')}">
+    <label class="f">내용</label><textarea id="fb" class="in" placeholder="자세한 내용을 적어 주세요">${esc(draft.body||'')}</textarea>
+    <label class="f">한 줄 요약 <span class="small">(비우면 자동으로 만들어요)</span></label><input id="fs" class="in" value="${esc(draft.summary||'')}">
+    <label class="f">날짜</label><input id="fd" type="date" class="in" value="${draft.date||todayStr()}">
+    <button class="btn block" style="margin-top:18px" id="fsave" data-t="${t}">${draft.editId?'수정 완료':'등록하기'}</button>
+  </div>`;
+}
+
+/* ---------- 시간표 ---------- */
+function viewTimetable(){
+  const tt=S.timetable; const dow=new Date().getDay()-1;
+  const edit=S.role==='teacher';
+  let h=`<div class="card"><table class="tt"><tr><th></th>${DAYS.map((d,i)=>`<th class="${i===dow?'today':''}">${d}</th>`).join('')}</tr>`;
+  tt.periods.forEach((p,r)=>{ h+=`<tr><th>${p.replace('교시','')}</th>${DAYS.map((d,c)=>`<td class="${c===dow?'today':''}" ${edit?`data-cell="${r}:${c}"`:''}>${esc(tt.cells[r][c])||'&nbsp;'}</td>`).join('')}</tr>`; });
+  h+=`</table></div>`;
+  h+= edit? `<p class="small">칸을 눌러 과목을 바꿀 수 있어요.</p>` : `<button class="btn m block" data-speak="tt">${speakingId==='tt'?'⏹ 멈추기':'🔊 오늘 시간표 읽어주기'}</button>`;
+  return h;
+}
+const ttText=()=>{ const d=new Date().getDay()-1; if(d<0||d>4) return '오늘은 수업이 없는 날이에요.'; return '오늘 시간표입니다. '+S.timetable.periods.map((p,r)=>S.timetable.cells[r][d]?`${p} ${S.timetable.cells[r][d]}`:'').filter(Boolean).join(', '); };
+
+/* ---------- 설정 ---------- */
+const RN=(k,def)=>(S.settings.rname&&S.settings.rname[k])||def;
+function viewSettings(){
+  const s=S.settings, d=D(), vol=d.vol;
+  const sel=(on)=>on?'sel':'';
+  const fsOpts=[[0,'보통',26],[1,'크게',40],[2,'매우 크게',56]];
+  const rateOpts=[[.5,'🐢','느리게'],[1,'🚶','보통'],[2,'🐇','빠르게']];
+  const volOpts=[[.35,'🔈','작게'],[.7,'🔉','보통'],[1,'🔊','크게']];
+  const rems=[['work','🏢','퇴근 시간','workTime'],['eve','🍚','저녁 시간','eveTime'],['bed','🌙','잠들기 전','bedTime']];
+  return `
+  <div class="card"><div class="sec-h"><span class="si">🔠</span>글자 크기</div>
+    <div class="pseg">${fsOpts.map(([i,n,px])=>`<button data-fs="${i}" class="${sel(d.fs===i)}" aria-label="글자 ${n}"><span class="g" style="font-size:${px}px">가</span><span class="l">${n}</span></button>`).join('')}</div></div>
+  <div class="card"><div class="sec-h"><span class="si">🐢</span>읽어주는 속도</div>
+    <div class="pseg">${rateOpts.map(([v,e,n])=>`<button data-rate="${v}" class="${sel(d.rate===v)}" aria-label="${n}"><span class="g">${e}</span><span class="l">${n}</span></button>`).join('')}</div>${voiceNote()}</div>
+  <div class="card"><div class="sec-h"><span class="si">🔊</span>소리 크기</div>
+    <div class="pseg">${volOpts.map(([v,e,n])=>`<button data-vol="${v}" class="${sel(vol===v)}" aria-label="소리 ${n}"><span class="g">${e}</span><span class="l">${n}</span></button>`).join('')}</div>
+    <button class="btn m block" style="margin-top:12px" data-a="testvoice">🔊 들어보기</button></div>
+  ${S.role==='parent'?`<div class="card"><div class="sec-h"><span class="si">🔔</span>다시 알려드릴 시간</div>
+    <p class="small" style="margin:-4px 0 10px">중요한 알림을 놓치지 않도록 모두 끌 수는 없어요.</p>
+    ${rems.map(([k,e,n,tk])=>`<div class="rem"><button class="${s.remind[k]?'on':''}" data-rm="${k}" aria-label="${n} 알림"><span class="g">${e}</span><span class="nmw"><b>${esc(RN(k,n))}</b><small>${s.remind[k]?'🔔 켜짐':'🔕 꺼짐'}</small></span></button><div class="rr"><label class="tm"><span class="tv">${fmtT(s[tk])}</span><input type="time" data-time="${tk}" value="${s[tk]}" aria-label="${n} 시간"></label><button class="ren" data-ren="${k}:${n}">✏️ 이름 바꾸기</button></div></div>`).join('')}</div>`:''}
+  ${S.role==='teacher'?`<div class="card"><div class="sec-h"><span class="si">🔔</span>학부모 확인 알려드릴 시간</div>
+    <p class="small" style="margin:-4px 0 10px">정한 시간에 학부모가 아직 확인 안 한 알림이 있는지 알려드려요.</p>
+    ${[['leave','🚪','퇴근 시간','tLeave'],['home','🏠','집 도착 시간','tHome'],['wake','🌅','내일 기상 시간','tWake'],['pre','🚌','출근 30분 전','tPre']].map(([k,e,n,tk])=>`<div class="rem"><button class="${s.tRemind[k]?'on':''}" data-trm="${k}" aria-label="${n} 알림"><span class="g">${e}</span><span class="nmw"><b>${esc(RN(k,n))}</b><small>${s.tRemind[k]?'🔔 켜짐':'🔕 꺼짐'}</small></span></button><div class="rr"><label class="tm"><span class="tv">${fmtT(s[tk])}</span><input type="time" data-time="${tk}" value="${s[tk]}" aria-label="${n} 시간"></label><button class="ren" data-ren="${k}:${n}">✏️ 이름 바꾸기</button></div></div>`).join('')}
+    <button class="btn p block" data-a="tpreview">🔔 지금 확인 현황 보기</button></div>`:''}
+  <div class="card"><div class="sec-h"><span class="si">🔁</span>알림장 옮기기</div>
+    <div class="bigact"><button data-a="export"><span class="g">📤</span>코드 복사</button><button data-a="import"><span class="g">📥</span>코드 붙여넣기</button></div>
+    <p class="small" style="margin:10px 0 0">다른 기기와는 자동으로 연결되지 않아요. (시연용)</p></div>
+  <div class="card"><div class="bigact" style="grid-template-columns:1fr"><button data-a="reset" style="color:var(--warn)"><span class="g">🔄</span>처음 상태로 되돌리기</button></div></div>
+  <p class="small" style="text-align:center">알림봄 시연 버전 · 화분(6조)</p>`;
+}
+
+/* ---------- 팝업(카톡형 요약) ---------- */
+function popupHTML(){
+  const p=pending(); if(!p.length) return '';
+  return `<div class="popup" id="pop"><div class="box">
+    <h2>🌼 알림봄 · 오늘 확인할 것 ${p.length}개</h2>
+    <ul>${p.slice(0,5).map(i=>`<li><span class="aac" style="width:48px;height:48px;font-size:1.6em">${esc(i.icon)}</span><span>${esc(i.title)}<br><span class="small" style="font-weight:500">${esc(i.summary||autoSummary(i.body))}</span></span></li>`).join('')}</ul>
+    <div class="row"><button class="speak" data-speak="popup" aria-label="읽어주기">🔊</button><button class="btn block" data-a="popclose" style="flex:1">확인하러 가기</button></div>
+    <p class="small" style="margin:10px 0 0">모두 ‘확인했어요’를 누르면 알림이 사라져요.</p>
+  </div></div>`;
+}
+function maybePopup(){ if(S.role!=='parent'||$('#pop')||!pending().length) return; document.body.insertAdjacentHTML('beforeend',popupHTML()); bindCommon(); }
+
+/* ---------- 이벤트 ---------- */
+function bindCommon(){
+  document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+  document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>action(b.dataset.a,b));
+  document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{ const t=b.dataset.go; if(t==='timetable') go('timetable'); else if(t==='settings') go('settings'); else go('list',{t}); });
+  document.querySelectorAll('[data-speak]').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.speak;
+    if(k==='home'){ const i=pending()[0]; speak(readText(i),'home'); }
+    else if(k==='popup'){ speak('오늘 확인할 알림입니다. '+pending().map(i=>`${i.title}. ${i.summary||autoSummary(i.body)}`).join(' '),'popup'); }
+    else if(k==='tt'){ speak(ttText(),'tt'); }
+    else if(/^w\d+$/.test(k)){ const x=S.items.welfare.find(v=>v.id===+k.slice(1)); if(x) speak(`${x.center}. ${x.title}. ${x.body}`,k); }
+    else if(k[0]==='m'&&/^m\d+$/.test(k)){ const m=S.items.meal.find(x=>x.id===+k.slice(1)); if(m) speak(`${m.date===todayStr()?'오늘':m.date} 중식 메뉴입니다. ${m.menu}`,k); }
+    else if(k==='tpop'){ const p=pending(); speak(p.length?`학부모가 아직 확인하지 않은 알림이 ${p.length}개 있어요. `+p.map(i=>i.title).join(', '):'학부모가 모든 알림을 확인했어요.','tpop'); }
+    else { const id=+k.slice(1); const it=Object.values(S.items).flat().find(x=>x.id===id); if(it) speak(readText(it),k); }
+  });
+  document.querySelectorAll('[data-done]').forEach(b=>b.onclick=()=>{ const [t,id]=b.dataset.done.split(':'); const it=S.items[t].find(x=>x.id==id); it.done=!it.done; save(); render(); if(it.done) toast('확인 완료! 👍'); });
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{ if(!await ask('삭제할까요?')) return; const [t,id]=b.dataset.del.split(':'); S.items[t]=S.items[t].filter(x=>x.id!=id); save(); render(); });
+  document.querySelectorAll('[data-icon]').forEach(b=>b.onclick=()=>{ readDraft(); draft.icon=b.dataset.icon; render(); });
+  document.querySelectorAll('[data-fs]').forEach(b=>b.onclick=()=>{ D().fs=+b.dataset.fs; save(); render(); });
+  document.querySelectorAll('[data-vol]').forEach(b=>b.onclick=()=>{ D().vol=+b.dataset.vol; save(); render(); speak('이 정도 크기로 읽어 드려요. '+SAMPLE,'test'); });
+  document.querySelectorAll('[data-ren]').forEach(b=>b.onclick=async()=>{
+    const [k,def]=b.dataset.ren.split(':'); const v=await ask('알림 이름을 바꿔요',{input:1,value:RN(k,def)}); if(v===null) return;
+    S.settings.rname=S.settings.rname||{}; const t=String(v).trim().slice(0,12);
+    if(t&&t!==def) S.settings.rname[k]=t; else delete S.settings.rname[k]; save(); render(); });
+  document.querySelectorAll('[data-rate]').forEach(b=>b.onclick=()=>{ D().rate=+b.dataset.rate; save(); render(); speak('이 속도로 읽어 드려요. '+SAMPLE,'test'); });
+  document.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{ const r=S.settings.remind,k=b.dataset.rm; if(r[k] && Object.values(r).filter(Boolean).length===1){ toast('알림은 최소 1개 켜져 있어야 해요'); return; } r[k]=!r[k]; save(); scheduleNative(); render(); });
+  document.querySelectorAll('[data-trm]').forEach(b=>b.onclick=()=>{ const k=b.dataset.trm; S.settings.tRemind[k]=!S.settings.tRemind[k]; save(); scheduleNative(); render(); });
+  document.querySelectorAll('[data-time]').forEach(b=>b.onchange=()=>{ const tv=b.previousElementSibling; if(tv) tv.textContent=fmtT(b.value); S.settings[b.dataset.time]=b.value; save(); scheduleNative(); });
+  document.querySelectorAll('[data-cell]').forEach(b=>b.onclick=async()=>{ const [r,c]=b.dataset.cell.split(':').map(Number); const v=await ask('과목 이름',{input:1,value:S.timetable.cells[r][c]}); if(v!==null){ S.timetable.cells[r][c]=v.trim(); save(); render(); } });
+  const mf=$('#mf'); if(mf) mf.onchange=()=>{ readMealDraft(); pickMealPhoto(mf.files[0]); };
+  const msave=$('#msave'); if(msave) msave.onclick=saveMeal;
+  const mrm=$('#mrm'); if(mrm) mrm.onclick=()=>{ readMealDraft(); mealDraft.img=null; render(); };
+  document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{ const [t,id]=b.dataset.edit.split(':'); const it=S.items[t].find(x=>x.id==id); if(!it) return; draft={icon:it.icon,title:it.title,body:it.body,summary:it.summary,date:it.date,editId:it.id}; go('form',{t}); });
+  document.querySelectorAll('[data-medit]').forEach(b=>b.onclick=()=>{ const m=S.items.meal.find(x=>x.id==b.dataset.medit); if(!m) return; mealDraft={date:m.date,menu:m.menu,img:m.img||null,editId:m.id}; go('mealform'); });
+  document.querySelectorAll('[data-pedit]').forEach(b=>b.onclick=()=>{ const p=S.items.photo.find(x=>x.id==b.dataset.pedit); if(!p) return; photoDraft={id:p.id,title:p.title,img:p.img}; go('photoform'); });
+  document.querySelectorAll('[data-wedit]').forEach(b=>b.onclick=()=>{ const x=S.items.welfare.find(v=>v.id==b.dataset.wedit); if(!x) return; wDraft={id:x.id,center:x.center,title:x.title,body:x.body,date:x.date}; go('wform'); });
+  document.querySelectorAll('[data-nrefresh]').forEach(b=>b.onclick=()=>{ const [nm,k]=b.dataset.nrefresh.split('|'); const c=allCenters().find(x=>x.name===nm); const bd=c&&boardsOf(c).find(x=>x.k===k); if(bd){ loadBoard(c,bd,true); render(); } });
+  document.querySelectorAll('[data-nspeak]').forEach(b=>b.onclick=()=>{ const [nm,k,ix]=b.dataset.nspeak.split('|'); const it=(wShown[nm+'|'+k]||[])[+ix]; if(it) speak(`${nm}. ${it.title}. ${it.date?dot(it.date)+' 게시':''}${it.deadline?'. 마감 '+dot(it.deadline):''}`,'n'+b.dataset.nspeak); });
+  document.querySelectorAll('[data-wrefresh]').forEach(b=>b.onclick=()=>{ loadNews(b.dataset.wrefresh,true); render(); });
+  document.querySelectorAll('[data-wf]').forEach(b=>b.onclick=()=>{ wFilter=b.dataset.wf; wBoard='notice'; render(); });
+  document.querySelectorAll('[data-wb]').forEach(b=>b.onclick=()=>{ wBoard=b.dataset.wb; render(); });
+  document.querySelectorAll('[data-wcedit]').forEach(b=>b.onclick=()=>{ const c=S.centers.find(x=>x.id==b.dataset.wcedit); if(!c) return; const bs=boardsOf(c); cDraft={id:c.id,name:c.name,notice:(bs.find(x=>x.k==='notice')||{}).url||'',recruit:(bs.find(x=>x.k==='recruit')||{}).url||'',job:(bs.find(x=>x.k==='job')||{}).url||''}; render(); });
+  document.querySelectorAll('[data-wdel]').forEach(b=>b.onclick=async()=>{ if(!await ask('이 복지관을 목록에서 뺄까요? (학부모 화면에서도 사라져요)')) return; S.centers=S.centers.filter(c=>c.id!=b.dataset.wdel); wFilter=''; cDraft={}; save(); render(); });
+  const pef=$('#pef'); if(pef) pef.onchange=()=>{ readPhotoDraft(); shrinkFile(pef.files[0],d=>{ photoDraft.img=d; render(); }); };
+  const psave=$('#psave'); if(psave) psave.onclick=savePhotoEdit;
+  const wsave=$('#wsave'); if(wsave) wsave.onclick=saveW;
+  const plsave=$('#plsave'); if(plsave) plsave.onclick=savePaste;
+  const pt=$('#pt'); if(pt) pt.addEventListener('paste',e=>{ let h=e.clipboardData&&e.clipboardData.getData('text/html'); if(!h){ const tx=(e.clipboardData&&e.clipboardData.getData('text/plain'))||''; if(/<(table|tr|a)\b/i.test(tx)) h=tx; } pDraft.html=h||''; const bd0=pBaseUrl(), n=pastedLinks(h||'',bd0).length, s=$('#pst');
+    if(s) s.textContent=n?`✅ 글 링크 ${n}개를 찾았어요`:(h?'⚠️ 복사된 내용에서 글 링크를 찾지 못했어요. 글을 눌러도 게시판으로 가요':'⚠️ 이 브라우저는 링크를 같이 복사하지 못했어요. 글을 눌러도 게시판으로 가요'); });
+  const fsave=$('#fsave'); if(fsave) fsave.onclick=()=>saveForm(fsave.dataset.t);
+  const pf=$('#pf'); if(pf) pf.onchange=()=>addPhoto(pf.files[0]);
+}
+function readDraft(){ const g=id=>document.getElementById(id); if(g('ft')){ draft.title=g('ft').value; draft.body=g('fb').value; draft.summary=g('fs').value; draft.date=g('fd').value; } }
+function saveForm(t){
+  readDraft();
+  if(!draft.title?.trim()){ toast('제목을 입력해 주세요'); return; }
+  if(!draft.body?.trim()){ toast('내용을 입력해 주세요'); return; }
+  const rec={icon:draft.icon,title:draft.title.trim(),body:draft.body.trim(),summary:(draft.summary||'').trim()||autoSummary(draft.body),date:draft.date||todayStr()};
+  if(draft.editId){ const it=S.items[t].find(x=>x.id===draft.editId);
+    if(it){ const changed=it.title!==rec.title||it.body!==rec.body; Object.assign(it,rec); if(changed) it.done=false; } toast('수정했어요'); }
+  else { S.items[t].push({id:S.nextId++,...rec,done:false}); toast('등록했어요'); }
+  save(); draft={icon:'📢'}; go('list',{t});
+}
+async function addPhoto(file){
+  if(!file) return;
+  const title=await ask('사진 제목 (예: 가을 소풍)',{input:1,value:'활동 사진'}); if(title===null) return;
+  const img=new Image(), url=URL.createObjectURL(file);
+  img.onload=()=>{ const max=900, k=Math.min(1,max/Math.max(img.width,img.height)); const c=document.createElement('canvas'); c.width=img.width*k; c.height=img.height*k; c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url);
+    S.items.photo.push({id:S.nextId++,title:title||'활동 사진',date:todayStr(),img:c.toDataURL('image/jpeg',.7)}); save(); render(); };
+  img.onerror=()=>toast('사진을 불러오지 못했어요');
+  img.src=url;
+}
+async function action(a,b){
+  if(a==='home') go('home');
+  else if(a==='back'){ if(route.p==='form') go('list',{t:route.t}); else if(route.p==='mealform') go('list',{t:'meal'}); else if(route.p==='photoform') go('list',{t:'photo'}); else if(route.p==='wform'||route.p==='pform') go('list',{t:'welfare'}); else go('home'); }
+  else if(a==='waddc'){ addCenter(); }
+  else if(a==='openext'){ openExternal(); }
+  else if(a==='wnew'){ wDraft={center:wFilter||(allCenters()[0]||{}).name||'',title:'',body:'',date:todayStr()}; go('wform'); }
+  else if(a==='wcancel'){ cDraft={}; render(); }
+  else if(a==='wshare'){ shareExport(); }
+  else if(a==='wpaste'){ pDraft={key:b.dataset.key,text:'',html:''}; go('pform'); }
+  else if(a==='pclear'){ if(S.snaps) delete S.snaps[pDraft.key]; save(); toast('지웠어요'); go('list',{t:'welfare'}); }
+  else if(a==='mealform'){ mealDraft={date:todayStr(),menu:'',img:null}; go('mealform'); }
+  else if(a==='form'){ draft={icon:'📢'}; go('form',{t:b.dataset.t}); }
+  else if(a==='popup') { maybePopup(); }
+  else if(a==='popclose'){ $('#pop')?.remove(); stopSpeak(); speakingId=null; go('list',{t:pending()[0]?.type||'notice'}); }
+  else if(a==='testvoice'){ speak('알림봄입니다. 이 속도와 크기로 읽어 드려요. '+SAMPLE,'test'); }
+  else if(a==='settingsgo'){ go('settings'); }
+  else if(a==='tpreview'){ teacherPopup(); }
+  else if(a==='tpopclose'){ $('#pop')?.remove(); stopSpeak(); speakingId=null; }
+  else if(a==='readall'){
+    if(S.role==='parent'){ const p=pending(); speak(p.length?'오늘 확인할 알림입니다. '+p.map(i=>`${i.title}. ${i.summary||autoSummary(i.body)}`).join(' '):'확인할 알림이 없어요.','all'); }
+    else speak(ttText(),'all');
+  }
+  else if(a==='aac'){ document.body.insertAdjacentHTML('beforeend',`<div class="popup" id="aacp"><div class="box" style="border-color:var(--mint)"><h2>🖼️ 그림으로 보는 안내</h2>
+    <ul>${[['🔊','소리 버튼을 누르면 읽어줘요'],['✅','확인하면 눌러 주세요'],['🔠','글자를 키울 수 있어요'],['🎒','준비물','']].filter(x=>x.length===2).map(([e,t])=>`<li><span class="aac" style="width:48px;height:48px;font-size:1.6em">${e}</span>${t}</li>`).join('')}</ul>
+    <button class="btn m block" id="aacx">알겠어요</button></div></div>`); $('#aacx').onclick=()=>$('#aacp').remove(); }
+  else if(a==='switch'){ S.role=null; S.child=null; save(); window.__loginMode=null; render(); }
+  else if(a==='reset'){ if(await ask('이 기기의 모든 알림장 정보를 지울까요?')){ localStorage.removeItem(KEY); S=seed(); norm(); S.role=getMode(); window.__loginMode=null; route={p:'home'}; render(); } }
+  else if(a==='export'){ const code=btoa(unescape(encodeURIComponent(JSON.stringify({items:S.items,timetable:S.timetable,className:S.className,nextId:S.nextId,centers:S.centers})))); (navigator.clipboard?.writeText(code)||Promise.reject()).then(()=>toast('코드를 복사했어요'),()=>ask('아래 코드를 복사하세요',{input:1,value:code})); }
+  else if(a==='import'){ const c=await ask('복사한 코드를 붙여넣으세요',{input:1}); if(!c) return; try{ const d=JSON.parse(decodeURIComponent(escape(atob(c.trim())))); if(!d.items) throw 0; Object.assign(S,{items:d.items,timetable:d.timetable||S.timetable,className:d.className||S.className,nextId:d.nextId||S.nextId,centers:d.centers||S.centers}); save(); toast('가져왔어요'); render(); }catch(e){ toast('코드가 올바르지 않아요'); } }
+}
+
+/* ---------- 정기 알림 (앱이 열려 있을 때 + 네이티브 로컬 알림) ---------- */
+const lastShown={};
+function teacherPopup(){
+  if($('#pop')) return;
+  const p=pending();
+  const body = p.length
+   ? `<h2>🌼 학부모 확인 현황</h2><p class="small" style="margin:2px 0 0">아직 확인하지 않은 알림 ${p.length}개</p>
+      <ul>${p.slice(0,5).map(i=>`<li style="background:var(--purple-l)"><span class="aac" style="width:48px;height:48px;font-size:1.6em">${esc(i.icon)}</span><span>${esc(i.title)}<br><span class="small" style="font-weight:500">⏳ 아직 확인 전이에요</span></span></li>`).join('')}</ul>`
+   : `<h2>✅ 학부모가 모든 알림을 확인했어요</h2><p class="small" style="margin:6px 0 14px">오늘 등록한 알림을 모두 읽고 확인했어요.</p>`;
+  document.body.insertAdjacentHTML('beforeend',`<div class="popup" id="pop"><div class="box" style="border-color:var(--purple)">${body}
+    <div class="row"><button class="speak" data-speak="tpop" aria-label="읽어주기">🔊</button><button class="btn p block" data-a="tpopclose" style="flex:1">알겠어요</button></div></div></div>`);
+  bindCommon();
+}
+const hmNow=()=>{ const n=new Date(); return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0'); };
+const PARENT_R=[['work','workTime'],['eve','eveTime'],['bed','bedTime']];
+const TEACHER_R=[['leave','tLeave'],['home','tHome'],['wake','tWake'],['pre','tPre']];
+function tick(){
+  const hm=hmNow();
+  if(S.role==='parent'){
+    if(!pending().length) return;
+    PARENT_R.forEach(([k,tk])=>{ if(S.settings.remind[k] && S.settings[tk]===hm && lastShown['p'+k]!==todayStr()+hm){ lastShown['p'+k]=todayStr()+hm; maybePopup(); } });
+  } else if(S.role==='teacher'){
+    TEACHER_R.forEach(([k,tk])=>{ if(S.settings.tRemind[k] && S.settings[tk]===hm && lastShown['t'+k]!==todayStr()+hm){ lastShown['t'+k]=todayStr()+hm; teacherPopup(); } });
+  }
+}
+setInterval(tick,20000);
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) setTimeout(maybePopup,300); });
+async function scheduleNative(){
+  try{
+    const LN=window.Capacitor?.Plugins?.LocalNotifications; if(!LN) return;
+    const perm=await LN.requestPermissions(); if(perm.display!=='granted') return;
+    const pend=await LN.getPending(); if(pend.notifications.length) await LN.cancel(pend);
+    const list=[]; let id=1;
+    const teacher=S.role==='teacher';
+    (teacher?TEACHER_R:PARENT_R).forEach(([k,tk])=>{
+      if(!(teacher?S.settings.tRemind:S.settings.remind)[k]) return; const [h,m]=S.settings[tk].split(':').map(Number);
+      list.push({id:id++,title:'🌼 알림봄',body:teacher?'학부모가 알림을 확인했는지 알림봄에서 확인해 보세요.':'아직 확인하지 않은 학교 알림이 있어요. 눌러서 확인해 주세요.',schedule:{on:{hour:h,minute:m},allowWhileIdle:true}});
+    });
+    if(list.length) await LN.schedule({notifications:list});
+  }catch(e){}
+}
+
+render();
+scheduleNative(); if(S.role==='parent'){ setTimeout(maybePopup,700); }
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>

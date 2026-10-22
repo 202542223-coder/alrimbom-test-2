@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#FFF4E8">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<title>알림봄</title>
+<style>
+html,body{margin:0;height:100%;background:#F6EDE3;font-family:"Noto Sans KR","Malgun Gothic",system-ui,sans-serif;color:#3B2F2A}
+.top{height:56px;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:900;font-size:20px}
+.top small{font-weight:500;font-size:13px;color:#7A6A62}
+.stage{height:calc(100% - 56px);display:flex;justify-content:center;gap:28px;padding:0 20px 18px;box-sizing:border-box}
+.pane{display:flex;flex-direction:column;width:420px;max-width:46vw;min-width:0}
+.pane h2{margin:0 0 8px;text-align:center;font-size:18px;padding:8px;border-radius:14px;color:#fff}
+.pane.p h2{background:#FF9B54}.pane.t h2{background:#9C86E0}
+.frame{flex:1;border:6px solid #3B2F2A;border-radius:34px;overflow:hidden;background:#FFF8F0;box-shadow:0 10px 30px rgba(60,40,20,.25)}
+iframe{width:100%;height:100%;border:0;display:block}
+</style>
+</head>
+<body>
+<div class="top">🌼 알림봄 <small>① 학부모 창과 ② 돌봄교사 창이 실시간으로 연결돼요 (시연용)</small></div>
+<div class="stage">
+  <div class="pane p"><h2>① 학부모 창</h2><div class="frame"><iframe src="app.html?mode=parent" title="학부모"></iframe></div></div>
+  <div class="pane t"><h2>② 돌봄교사 창</h2><div class="frame"><iframe src="app.html?mode=teacher" title="돌봄교사"></iframe></div></div>
+</div>
+<script>
+// 좁은 화면(휴대폰)에서는 한 화면 + 모드 전환 버전으로 이동
+if(window.innerWidth<900) location.replace('app.html');
+else window.addEventListener('resize',()=>{ if(window.innerWidth<900) location.replace('app.html'); });
+</script>
+</body>
+</html>
