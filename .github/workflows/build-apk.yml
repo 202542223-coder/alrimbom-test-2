@@ -1,0 +1,54 @@
+name: Build APK
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+      - run: npm install
+      - run: npx cap add android
+      - run: npx cap sync android
+      - name: Allow notifications permission
+        run: |
+          f=android/app/src/main/AndroidManifest.xml
+          grep -q POST_NOTIFICATIONS $f || sed -i 's#</manifest>#    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n</manifest>#' $f
+      - name: Allow text-to-speech engine lookup (Android 11+)
+        run: |
+          f=android/app/src/main/AndroidManifest.xml
+          grep -q TTS_SERVICE $f || sed -i 's#</manifest>#    <queries><intent><action android:name="android.intent.action.TTS_SERVICE"/></intent></queries>\n</manifest>#' $f
+      - name: Fix WebView text zoom (Samsung font size must not break layout)
+        run: |
+          f=$(find android/app/src/main/java -name MainActivity.java | head -1)
+          pkg=$(grep -m1 '^package' "$f")
+          cat > "$f" <<EOF
+          $pkg
+
+          import android.os.Bundle;
+          import android.webkit.WebSettings;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+              @Override
+              public void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  WebSettings st = getBridge().getWebView().getSettings();
+                  st.setTextZoom(100);
+                  getBridge().getWebView().setOverScrollMode(android.view.View.OVER_SCROLL_NEVER);
+                  getBridge().getWebView().setHorizontalScrollBarEnabled(false);
+              }
+          }
+          EOF
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: alrimbom-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
